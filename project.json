@@ -1,0 +1,142 @@
+[
+    {
+        "id": 136,
+        "name": "lilith",
+        "path": "caifuliang/lilith"
+    },
+    {
+        "id": 132,
+        "name": "metabase",
+        "path": "nbiz/metabase"
+    },
+    {
+        "id": 130,
+        "name": "self-analysis-platform-html",
+        "path": "nbiz/self-analysis-platform-html"
+    },
+    {
+        "id": 128,
+        "name": "janusgraph-manager",
+        "path": "nbiz/janusgraph-manager"
+    },
+    {
+        "id": 125,
+        "name": "janusgraph-manager-html",
+        "path": "nbiz/janusgraph-manager-html"
+    },
+    {
+        "id": 107,
+        "name": "janusgraph-jobs",
+        "path": "nbiz/janusgraph-jobs"
+    },
+    {
+        "id": 106,
+        "name": "galilei",
+        "path": "platform/galilei"
+    },
+    {
+        "id": 94,
+        "name": "nacos",
+        "path": "platform/nacos"
+    },
+    {
+        "id": 90,
+        "name": "graph-analyse",
+        "path": "nbiz/graph-analyse"
+    },
+    {
+        "id": 84,
+        "name": "relation-graph-html",
+        "path": "nbiz/relation-graph-html"
+    },
+    {
+        "id": 83,
+        "name": "relation-graph",
+        "path": "nbiz/relation-graph"
+    },
+    {
+        "id": 81,
+        "name": "incubator-superset",
+        "path": "nbiz/incubator-superset"
+    },
+    {
+        "id": 71,
+        "name": "idc",
+        "path": "platform/idc"
+    },
+    {
+        "id": 70,
+        "name": "data-factory",
+        "path": "nbiz/data-factory"
+    },
+    {
+        "id": 69,
+        "name": "data-factory-html",
+        "path": "nbiz/data-factory-html"
+    },
+    {
+        "id": 68,
+        "name": "wac-report",
+        "path": "nbiz/wac-report"
+    },
+    {
+        "id": 60,
+        "name": "spark-jobs",
+        "path": "nbiz/spark-jobs"
+    },
+    {
+        "id": 54,
+        "name": "sys",
+        "path": "nbiz/sys"
+    },
+    {
+        "id": 53,
+        "name": "wac-manager",
+        "path": "nbiz/wac-manager"
+    },
+    {
+        "id": 51,
+        "name": "base",
+        "path": "nbiz/base"
+    },
+    {
+        "id": 50,
+        "name": "dap",
+        "path": "nbiz/dap"
+    },
+    {
+        "id": 48,
+        "name": "ereport",
+        "path": "nbiz/ereport"
+    },
+    {
+        "id": 46,
+        "name": "ice",
+        "path": "nbiz/ice"
+    },
+    {
+        "id": 44,
+        "name": "datax",
+        "path": "platform/datax"
+    },
+    {
+        "id": 43,
+        "name": "irisk",
+        "path": "nbiz/irisk"
+    },
+    {
+        "id": 42,
+        "name": "wac",
+        "path": "nbiz/wac"
+    },
+    {
+        "id": 41,
+        "name": "cgw",
+        "path": "platform/cgw"
+    },
+    {
+        "id": 40,
+        "name": "wac-html",
+        "path": "nbiz/wac-html"
+    }
+]
