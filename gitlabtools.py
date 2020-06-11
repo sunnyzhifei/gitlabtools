@@ -185,10 +185,6 @@ class GitLabTools():
                     print(info + " error,message:" + output["message"])
                 else:
                     print(info + " success,message: "+ output["message"])
-        # elif err:
-        #     err = json.loads(output.decode("utf-8"))
-
-
         else:
             print(info + " success")
         return output
