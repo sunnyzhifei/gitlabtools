@@ -2,12 +2,12 @@ import os
 import sys
 import getopt
 import requests
-from urllib.parse import unquote
 import time
 import subprocess
 import datetime
 import json
 import re
+from urllib import parse
 
 
 class GitLabTools():
@@ -21,10 +21,10 @@ class GitLabTools():
         self.download = False
         self.createtag = ""
         self.meassge  = ""
-        self.deletetag = ""
+        self.truncatetag = ""
         self.time = datetime.datetime.now().strftime(r"%Y%m%d%H")
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:", ["help", "project=", "branch=", "job=", "download", "createtag=", "deletetag=", "meassge="])
+            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:", ["help", "project=", "branch=", "job=", "download", "createtag=", "truncatetag=", "meassge="])
         except getopt.GetoptError:
             self.usage()
             sys.exit()
@@ -44,11 +44,15 @@ class GitLabTools():
                 self.download = True
             elif opt in ("-c", "--createtag"):
                 self.createtag = value
-            elif opt in ("-t", "--deletetag"):
-                self.deletetag = value
+            elif opt in ("-t", "--truncatetag"):
+                self.truncatetag = value
         if not sys.argv[1:]:
             self.usage()
             sys.exit()
+        if not self.download and not self.createtag and not self.truncatetag:
+            raise Exception("operate nedd  -d or -c or -t")
+        if self.createtag and not self.branch and not self.jobs_id_list:
+            raise Exception("create tag need job_id or branch")
         if self.branch and self.jobs_id_list:
             raise Exception("job and branch cant concurrence")
         self.projects_id_list = self.get_project()
@@ -59,10 +63,10 @@ class GitLabTools():
             -h, --help               show this help
             -p, --project            assign project, example: -p base,wac-html
             -b, --branch             assign branch, example: -b test
-            -j, --job                assign job, example: 20849,20848
+            -j, --job                assign job, example: -j 20849,20848
             -d, --download           open download artifact
             -c, --createtag          assign create tag, example: -c v2020060722
-            -t, --deletetag          assign delete tag, example: -t v2020060722
+            -t, --truncatetag        assign truncate tag, example: -t v2020060722
             -m, --meassge            assign git commit tag message, example: -m "tag meassge"
         ''')
 
@@ -91,7 +95,7 @@ class GitLabTools():
                 if disposition_split[1].strip().lower().startswith('filename='):
                     file_name = disposition_split[1].split('=')
                     if len(file_name) > 1:
-                        filename = unquote(file_name[1])
+                        filename = parse.unquote(file_name[1])
         if not filename and os.path.basename(url):
             filename = os.path.basename(url).split("?")[0]
         if not filename:
@@ -146,26 +150,27 @@ class GitLabTools():
     def create_tag(self):
         if self.branch:
             for project in self.projects_id_list:
-                info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "tag_name": self.createtag, "branch": self.branch, "message": self.meassge}
-                url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?tag_name={tag_name}&ref={branch}&message='{message}'".format(**info)
+                url_params = {"tag_name": self.createtag, "ref": self.branch, "message": self.meassge}
+                info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "params": parse.urlencode(url_params)}
+                url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}".format(**info)
                 cmd = r'curl --request POST --header "PRIVATE-TOKEN: {}" "{}"'.format(self.token, url)
-                self.doshell(cmd, "create tag[%s] " % info["tag_name"])
+                self.doshell(cmd, "create tag[%s] " % url_params["tag_name"])
 
 
         elif self.jobs_id_list:
             for i, project in enumerate(self.projects_id_list):
-                info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "tag_name": self.createtag,
-                        "job_id": self.jobs_id_list[i], "ref": "", "branch": self.branch, "message": self.meassge}
+                info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
                 cmd1 = r'curl --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}"'.format(**info)
                 output = self.doshell(cmd1)
                 commit_sha = output["commit"]["short_id"]
-                info["commit_sha"] = commit_sha
-                cmd2 = r'''curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?tag_name={tag_name}&ref={commit_sha}&message='{message}'"'''.format(**info)
-                self.doshell(cmd2, "create tag[%s] " % info["tag_name"])
+                url_params = {"tag_name": self.createtag, "ref": commit_sha,"branch": self.branch, "message": self.meassge}
+                info["params"] =  parse.urlencode(url_params)
+                cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}"'.format(**info)
+                self.doshell(cmd2, "create tag[%s] " % url_params["tag_name"])
 
     def delete_tag(self):
         for project in self.projects_id_list:
-            info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "tag_name": self.deletetag}
+            info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "tag_name": self.truncatetag}
             cmd = r'curl --request DELETE --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags/{tag_name}"'.format(**info)
             self.doshell(cmd, "delete tag[%s] " % info["tag_name"])
 
@@ -174,11 +179,16 @@ class GitLabTools():
         output, err = p.communicate()
         if output:
             output = json.loads(output.decode("utf-8"))
-            r_message = re.sub(r"\s+", "%20", output["message"]).strip("'")
-            if r_message != self.meassge:
-                print(info + " error,message:" + output["message"])
-            else:
-                print(info + " success,message: "+ output["message"])
+            if output.get("message"):
+                r_message = re.sub(r"\s+", "%20", output["message"]).strip("'")
+                if r_message != self.meassge:
+                    print(info + " error,message:" + output["message"])
+                else:
+                    print(info + " success,message: "+ output["message"])
+        # elif err:
+        #     err = json.loads(output.decode("utf-8"))
+
+
         else:
             print(info + " success")
         return output
@@ -190,5 +200,5 @@ if __name__ == "__main__":
         gitlab.download_by_shell()
     if gitlab.createtag:
         gitlab.create_tag()
-    if gitlab.deletetag:
+    if gitlab.truncatetag:
         gitlab.delete_tag()
