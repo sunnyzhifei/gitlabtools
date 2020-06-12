@@ -22,9 +22,10 @@ class GitLabTools():
         self.createtag = ""
         self.meassge  = ""
         self.truncatetag = ""
+        self.mergerequest= {}
         self.time = datetime.datetime.now().strftime(r"%Y%m%d%H")
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:", ["help", "project=", "branch=", "job=", "download", "createtag=", "truncatetag=", "meassge="])
+            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:", ["help", "project=", "branch=", "job=", "download", "createtag=", "truncatetag=", "meassge=", "mergerequest="])
         except getopt.GetoptError:
             self.usage()
             sys.exit()
@@ -39,21 +40,36 @@ class GitLabTools():
             elif opt in ("-j", "--job"):
                 self.jobs_id_list = list(filter(None, value.split(",")))
             elif opt in ("-m", "--meassge"):
-                self.meassge = re.sub(r"\s+","%20", value)
+                # self.meassge = re.sub(r"\s+","%20", value)
+                self.meassge = value
             elif opt in ("-d", "--download"):
                 self.download = True
             elif opt in ("-c", "--createtag"):
                 self.createtag = value
             elif opt in ("-t", "--truncatetag"):
                 self.truncatetag = value
+            elif opt in ("-r", "--mergerequest"):
+                merge_request = parse.parse_qs(value)
+                if not merge_request.get("sb") or not merge_request.get("tb") or not merge_request.get("tt"):
+                    self.usage()
+                    raise Exception("merge requests miss args")
+                self.mergerequest["sbranch"] = merge_request["sb"][0]
+                self.mergerequest["tbranch"] = merge_request["tb"][0]
+                self.mergerequest["title"] = merge_request["tt"][0]
         if not sys.argv[1:]:
             self.usage()
             sys.exit()
-        if not self.download and not self.createtag and not self.truncatetag:
-            raise Exception("operate nedd  -d or -c or -t")
+        if not self.download and not self.createtag and not self.truncatetag and not self.mergerequest:
+            self.usage()
+            raise Exception("operate nedd  -d or -c or -t or -r")
+        if not self.projects:
+            self.usage()
+            raise Exception("miss project name ")
         if self.createtag and not self.branch and not self.jobs_id_list:
+            self.usage()
             raise Exception("create tag need job_id or branch")
         if self.branch and self.jobs_id_list:
+            self.usage()
             raise Exception("job and branch cant concurrence")
         self.projects_id_list = self.get_project()
 
@@ -68,6 +84,7 @@ class GitLabTools():
             -c, --createtag          assign create tag, example: -c v2020060722
             -t, --truncatetag        assign truncate tag, example: -t v2020060722
             -m, --meassge            assign git commit tag message, example: -m "tag meassge"
+            -r, --mergerequest       push and accept MR, example: -r "sb=lzf&tb=master&tt=testmerge"
         ''')
 
     def get_project(self):
@@ -155,18 +172,33 @@ class GitLabTools():
                 url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}".format(**info)
                 cmd = r'curl --request POST --header "PRIVATE-TOKEN: {}" "{}"'.format(self.token, url)
                 self.doshell(cmd, "create tag[%s] " % url_params["tag_name"])
-
-
         elif self.jobs_id_list:
             for i, project in enumerate(self.projects_id_list):
                 info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
                 cmd1 = r'curl --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}"'.format(**info)
-                output = self.doshell(cmd1)
-                commit_sha = output["commit"]["short_id"]
-                url_params = {"tag_name": self.createtag, "ref": commit_sha,"branch": self.branch, "message": self.meassge}
-                info["params"] =  parse.urlencode(url_params)
-                cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}"'.format(**info)
-                self.doshell(cmd2, "create tag[%s] " % url_params["tag_name"])
+                result = self.doshell(cmd1)
+                if result:
+                    commit_sha = result["commit"]["short_id"]
+                    url_params = {"tag_name": self.createtag, "ref": commit_sha,"branch": self.branch, "message": self.meassge}
+                    info["params"] =  parse.urlencode(url_params)
+                    cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}"'.format(**info)
+                    self.doshell(cmd2, "create tag[%s] " % url_params["tag_name"])
+                else:
+                    print("%s create tag is interrupted,because pre_cmd is faild" % project)
+
+    def merge_request(self):
+        for i, project  in enumerate(self.projects_id_list):
+            url_params = {"source_branch": self.mergerequest["sbranch"], "target_branch": self.mergerequest["tbranch"], "title": self.mergerequest["title"]}
+            info = {"token": self.token, "gitlab_domain": self.gitlab_domain, "project_id": project, "params": parse.urlencode(url_params)}
+            cmd1 = r'curl --request POST  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/merge_requests?{params}"'.format(**info)
+            result = self.doshell(cmd1, "merge request[%s] " % url_params["title"])
+            if result and result.get("iid"):
+                info["iid"] = result["iid"]
+                time.sleep(5)
+                cmd2 = r'curl --request PUT  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/merge_requests/{iid}/merge"'.format(**info)
+                self.doshell(cmd2, "merge accept merge request[%s] " % url_params["title"])
+            else:
+                print("%s merge request is interrupted,iid not found,because pre_cmd is faild" % self.projects[i])
 
     def delete_tag(self):
         for project in self.projects_id_list:
@@ -179,15 +211,16 @@ class GitLabTools():
         output, err = p.communicate()
         if output:
             output = json.loads(output.decode("utf-8"))
+            # print(output)
             if output.get("message"):
-                r_message = re.sub(r"\s+", "%20", output["message"]).strip("'")
-                if r_message != self.meassge:
-                    print(info + " error,message:" + output["message"])
-                else:
-                    print(info + " success,message: "+ output["message"])
+                r_message = "".join(output["message"])
+                print(info + "message: " + r_message)
+            elif output.get("iid"):
+                r_message = str(output["iid"])
+                print(info + "iid: " + r_message)
+            return output
         else:
-            print(info + " success")
-        return output
+            print(info + "success")
 
 
 if __name__ == "__main__":
@@ -198,3 +231,5 @@ if __name__ == "__main__":
         gitlab.create_tag()
     if gitlab.truncatetag:
         gitlab.delete_tag()
+    if gitlab.mergerequest:
+        gitlab.merge_request()
