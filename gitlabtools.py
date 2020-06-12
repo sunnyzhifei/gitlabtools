@@ -23,7 +23,7 @@ class GitLabTools():
         self.meassge  = ""
         self.truncatetag = ""
         self.mergerequest = {}
-        self.updaterequest = {"state_event": "close", "tbranch": "", "title": ""}
+        self.updaterequest = {"iid": "", "state_event": "close", "tbranch": "", "title": ""}
         self.time = datetime.datetime.now().strftime(r"%Y%m%d%H")
         try:
             opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:", ["help", "project=", "branch=", "job=", "download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge"])
@@ -197,6 +197,9 @@ class GitLabTools():
                 state = str(output["state"])
                 iid = str(output["iid"])
                 print("{}, state: {}, iid: {}".format(info, state, iid))
+            elif output.get("status"):
+                status = output.get("status")
+                print("{}, status: {}".format(info, status))
             else:
                 print(output)
             return output
@@ -215,7 +218,7 @@ class GitLabTools():
             for i, project in enumerate(self.projects_id_list):
                 info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
                 cmd1 = r'curl --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}"'.format(**info)
-                result = self.doshell(cmd1)
+                result = self.doshell(cmd1, "%s get commit_id" % self.projects[i])
                 if result:
                     commit_sha = result["commit"]["short_id"]
                     url_params = {"tag_name": self.createtag, "ref": commit_sha, "message": self.meassge}
@@ -223,7 +226,7 @@ class GitLabTools():
                     cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}"'.format(**info)
                     self.doshell(cmd2, "create tag[%s] " % url_params["tag_name"])
                 else:
-                    print("%s create tag is interrupted,because pre_cmd is faild" % project)
+                    print("%s create tag is interrupted,because pre_cmd is faild" % self.projects[i])
 
     def delete_tag(self):
         for project in self.projects_id_list:
@@ -264,5 +267,5 @@ if __name__ == "__main__":
         gitlab.delete_tag()
     if gitlab.mergerequest:
         gitlab.request_merge()
-    if gitlab.updaterequest:
+    if gitlab.updaterequest["iid"]:
         gitlab.update_merge()
