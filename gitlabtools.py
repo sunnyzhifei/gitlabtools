@@ -51,7 +51,6 @@ class GitLabTools():
                 self.truncatetag = value
             elif opt in ("-r", "--requestmerge"):
                 merge_request = parse.parse_qs(value)
-                print(merge_request)
                 if not merge_request.get("sb") or not merge_request.get("tb") or not merge_request.get("tt"):
                     self.usage()
                     raise Exception("merge requests miss args")
