@@ -97,8 +97,12 @@ class GitLabTools():
             -c, --createtag          assign create tag, example: -c v2020060722
             -t, --truncatetag        assign truncate tag, example: -t v2020060722
             -m, --meassge            assign git commit tag message, example: -m "tag meassge"
-            -r, --requestmerge       push and accept MR, example: -r "sb=lzf&tb=master&tt=testmerge"
+            -r, --requestmerge       push and accept MR, example: -r "sb=test&tb=master&tt=testmerge"
             -u, --updatemerge        update MR by merge_iid, example: -u "iid=5&state_event=close&title=test&target_branch=master"
+
+        # 下载artifacts:  python ./gitlabtools.py -p ereport,base,wac-html,wac-manager,relation-graph-html -b test -d
+        # 创建tag:  python ./gitlabtools.py -p ereport,base,wac-html,wac-manager,relation-graph-html -b test -c v2020090910 -m "信贷业务配置化v6.8.0和关系图谱v3.3.6"
+        # 合并代码:  python ./gitlabtools.py -p ereport,base,wac-html,wac-manager,relation-graph-html -r "sb=test&tb=master&tt=信贷业务配置化v6.8.0和关系图谱v3.3.6"
         ''')
 
     def get_project(self):
