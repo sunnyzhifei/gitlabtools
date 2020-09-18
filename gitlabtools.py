@@ -8,7 +8,24 @@ import datetime
 import json
 import re
 from urllib import parse
+import logging
 
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
+
+# 使用FileHandler输出到文件
+fh = logging.FileHandler("gitlabtools.log", mode='w')
+fh.setLevel(logging.CRITICAL)
+fh.setFormatter(formatter)
+
+# 使用StreamHandler输出到屏幕
+ch = logging.StreamHandler()
+ch.setLevel(logging.CRITICAL)
+ch.setFormatter(formatter)
+
+logger.addHandler(fh)
+logger.addHandler(ch)
 
 class GitLabTools():
     ''' download aritfact and create tag by gitlab api'''
@@ -69,23 +86,23 @@ class GitLabTools():
                     self.updaterequest["title"] = update_request["title"][0]
                 if update_request.get("target_branch"):
                     self.updaterequest["tbranch"] = update_request["target_branch"][0]
-        if not sys.argv[1:]:
-            self.usage()
-            sys.exit()
+        # if not sys.argv[1:]:
+        #     self.usage()
+        #     sys.exit()
         if not self.download and not self.createtag and not self.truncatetag and not self.mergerequest and not self.updaterequest:
             self.usage()
             raise Exception("operate nedd  -d or -c or -t or -r -u")
-        if not self.projects:
-            self.usage()
-            raise Exception("miss project name ")
+        # if not self.projects:
+        #     self.usage()
+        #     raise Exception("miss project name ")
         if self.createtag and not self.branch and not self.jobs_id_list:
             self.usage()
             raise Exception("create tag need job_id or branch")
         if self.branch and self.jobs_id_list:
             self.usage()
             raise Exception("job and branch cant concurrence")
-        self.projects_id_list = self.get_project()
-
+        # self.projects_id_list = self.get_project()
+        self.projects_id_list = []
     def usage(self):
         print('''  Usage: python ./gitlabtools.py  [options]
         options:
@@ -106,22 +123,27 @@ class GitLabTools():
         ''')
 
     def get_project(self):
-        projects_id_list = []
-        contents = json.load(open("project.json"))
-        if self.projects[0] == "all" or self.projects[0] == "ALL":
-            for project in contents:
-                projects_id_list.append(project["id"])
-        elif self.projects[0] != "all" or self.projects[0] != "ALL":
-            for send_project in self.projects:
-                sign = False
+        try:
+            dirname, filename = os.path.split(os.path.abspath(__file__))
+            #print(dirname)
+            os.chdir(dirname) 
+            projects_id_list = []
+            contents = json.load(open("project.json"))
+            if self.projects[0] == "all" or self.projects[0] == "ALL":
                 for project in contents:
-                    if project["name"] == send_project:
-                        projects_id_list.append(project["id"])
-                        sign = True
-                if not sign:
-                    raise Exception("project name[%s] not find in project.json " % send_project)
-        return projects_id_list
-
+                    projects_id_list.append(project["id"])
+            elif self.projects[0] != "all" or self.projects[0] != "ALL":
+                for send_project in self.projects:
+                    sign = False
+                    for project in contents:
+                        if project["name"] == send_project:
+                            projects_id_list.append(project["id"])
+                            sign = True
+                    if not sign:
+                        raise Exception("project name[%s] not find in project.json " % send_project)
+            return projects_id_list
+        except Exception as e:
+            logger.exception(e)
     def remove_dicemp(self, dics):
         for k in list(dics.keys()):
             if not dics[k]:
@@ -173,18 +195,22 @@ class GitLabTools():
 
         if self.projects_id_list and self.branch:
             # download artifact by branch
-            for project in self.projects_id_list:
+            for i, project in enumerate(self.projects_id_list):
+                logger.critical("[%s] artifact download starting" %self.projects[i])
                 info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "branch": self.branch, "job_re": job_re}
                 url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/artifacts/{branch}/download?job={job_re}".format(**info)
                 cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
                 subprocess.call(cmd, shell=True)
+                logger.critical("[%s] artifact download finished" %self.projects[i])
         elif self.projects_id_list and self.jobs_id_list and len(self.projects_id_list) == len(self.jobs_id_list):
             # download artifact by jobs_id
             for i, project in enumerate(self.projects_id_list):
+                logger.critical("[%s] artifact download starting" %self.projects[i])
                 info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "job_id": self.jobs_id_list[i]}
                 url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}/artifacts".format(**info)
                 cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
                 subprocess.call(cmd, shell=True)
+                logger.critical("[%s] artifact download finished" %self.projects[i])
         else:
             raise Exception("download exception")
 
@@ -195,28 +221,28 @@ class GitLabTools():
             output = json.loads(output.decode("utf-8"))
             if output.get("message"):
                 r_message = "".join(output["message"])
-                print("{}, message: {}".format(info, r_message))
+                logger.critical("{}, message: {}".format(info, r_message))
             elif output.get("state"):
                 state = str(output["state"])
                 iid = str(output["iid"])
-                print("{}, state: {}, iid: {}".format(info, state, iid))
+                logger.critical("{}, state: {}, iid: {}".format(info, state, iid))
             elif output.get("status"):
                 status = output.get("status")
-                print("{}, status: {}".format(info, status))
+                logger.critical("{}, status: {}".format(info, status))
             else:
-                print(output)
+                logger.critical(output)
             return output
         else:
-            print(info + "success")
+            logger.critical(info + "success")
 
     def create_tag(self):
         if self.branch:
             url_params = {"tag_name": self.createtag, "ref": self.branch, "message": self.meassge}
-            for project in self.projects_id_list:
+            for i, project in enumerate(self.projects_id_list):
                 info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "params": parse.urlencode(url_params)}
                 url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}".format(**info)
                 cmd = r'curl --request POST --header "PRIVATE-TOKEN: {}" "{}"'.format(self.token, url)
-                self.doshell(cmd, "create tag[%s] " % url_params["tag_name"])
+                self.doshell(cmd, "[%s] create tag[%s] " %(self.projects[i],url_params["tag_name"]))
         elif self.jobs_id_list:
             for i, project in enumerate(self.projects_id_list):
                 info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
@@ -227,15 +253,15 @@ class GitLabTools():
                     url_params = {"tag_name": self.createtag, "ref": commit_sha, "message": self.meassge}
                     info["params"] =  parse.urlencode(url_params)
                     cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags?{params}"'.format(**info)
-                    self.doshell(cmd2, "create tag[%s] " % url_params["tag_name"])
+                    self.doshell(cmd2, "[%s] create tag[%s] " %(self.projects[i],url_params["tag_name"]))
                 else:
-                    print("%s create tag is interrupted,because pre_cmd is faild" % self.projects[i])
+                    logger.error("%s create tag is interrupted,because pre_cmd is faild" % self.projects[i])
 
     def delete_tag(self):
-        for project in self.projects_id_list:
+        for i, project in enumerate(self.projects_id_list):
             info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "tag_name": self.truncatetag}
             cmd = r'curl --request DELETE --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/tags/{tag_name}"'.format(**info)
-            self.doshell(cmd, "delete tag[%s] " % info["tag_name"])
+            self.doshell(cmd, "[%s] delete tag[%s] " %(self.projects[i],info["tag_name"]))
 
     def request_merge(self):
         url_params = {"source_branch": self.mergerequest["sbranch"], "target_branch": self.mergerequest["tbranch"], "title": self.mergerequest["title"]}
@@ -247,17 +273,17 @@ class GitLabTools():
                 info["iid"] = result["iid"]
                 time.sleep(5)
                 cmd2 = r'curl --request PUT  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/merge_requests/{iid}/merge"'.format(**info)
-                self.doshell(cmd2, "merge accept merge request[%s] " % url_params["title"])
+                self.doshell(cmd2, "[%s] merge accept merge request[%s] " %(self.projects[i],url_params["title"]))
             else:
-                print("%s merge request is interrupted,iid not found,because pre_cmd is faild" % self.projects[i])
+                logger.error("%s merge request is interrupted,iid not found,because pre_cmd is faild" % self.projects[i])
 
     def update_merge(self):
         url_params = {"state_event": self.updaterequest["state_event"], "target_branch": self.updaterequest["tbranch"], "title": self.updaterequest["title"]}
         url_params = self.remove_dicemp(url_params)
-        for project  in self.projects_id_list:
+        for i, project  in enumerate(self.projects_id_list):
             info = {"token": self.token, "gitlab_domain": self.gitlab_domain, "project_id": project, "iid": self.updaterequest["iid"], "params": parse.urlencode(url_params)}
             cmd = r'curl --request PUT  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/merge_requests/{iid}?{params}"'.format(**info)
-            self.doshell(cmd, "update merge request[%s] " % info["iid"])
+            self.doshell(cmd, "[%s] update merge request[%s] " %(self.projects[i], info["iid"]))
 
 
 if __name__ == "__main__":

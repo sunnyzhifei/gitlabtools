@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>gitlabtools</title>
+    <!-- <link rel="stylesheet" type="text/css" href="static/css/css.css"/> -->
+    <!-- <script src="static/js/jquery.min.js"></script> -->
+    <!-- <script src="static/js/tagsinput.js" type="text/javascript" charset="utf-8"></script> -->
+    <script>
+        function createTagf(){
+            flag=document.getElementById("createTag")
+    
+            if (flag.checked) {
+                document.getElementById("createTagValue").innerHTML="<input type='text' name='createTagName' placeholder='tag name' style='width:100px'> \
+                <input type='text' name='createTagMessage' placeholder='tag message' style='width:350px'>"
+            } else {
+                document.getElementById("createTagValue").innerHTML=""
+            }
+        };
+        function mergef(){
+            flag1=document.getElementById("merge")
+    
+            if (flag1.checked) {
+                document.getElementById("mergeValue").innerHTML="<input type='text' name='mergeSourceBranch' placeholder='source branch' style='width:100px'>\
+                <input type='text' name='mergeTargetBranch' placeholder='target branch' style='width:100px'> \
+                <input type='text' name='mergeMessage' placeholder='merge message' style='width:350px'>"
+            } else {
+                document.getElementById("mergeValue").innerHTML=""
+            }
+        }
+    </script>
+   
+    <style>
+        pre{
+            white-space:pre-wrap;
+            white-space:-moz-pre-wrap;
+            white-space:-pre-wrap;
+            white-space:-o-pre-wrap;
+            word-wrap:break-word;
+            width: 1000px;
+            height: 600px;
+            overflow: auto;
+            overflow-x: hidden !important;
+            background-color: aliceblue;
+            margin-top: 0%;
+            }
+    </style> 
+
+</head>
+<body >
+    <div style="padding: 0 500px;">
+        <form action="/gitlab" method="POST" target="targetIfr" style="width: 1000px;padding-top: 1px;background-color: darkkhaki;">
+            <p>Project <input type = "text" name = "project" style='width:350px'/></p>
+            <select name="select">
+                <option value ="branch">Branch</option>
+                <option value ="job">Job</option>
+            </select>
+            <input type = "text" name= "selectInput" style='width:350px'/>
+            <p>
+                <input type="checkbox" name="download" value="true" /> download artifacts
+            </p>
+            <p style="display: inline;">
+                <input type="checkbox" name="createTag" value="true" id="createTag" onclick="createTagf()"/> 
+                create tag
+                <p id="createTagValue" style="display: inline;"></p>
+            </p>
+            <p style="display: inline;">
+                <input type="checkbox" name="merge" value="true" id="merge" onclick="mergef()"/> 
+                merge
+                <p id="mergeValue" style="display: inline;"></p>
+            </p>
+            <p style="text-align: center;padding-bottom: 10px;"><input type = "submit" value = "submit" /></p>
+         </form>
+         <pre id="output"></pre>
+        <iframe name="targetIfr" style="display:none"></iframe>
+    <div>
+    <script>
+        var output = document.getElementById('output');
+
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{{ url_for("stream") }}');
+        xhr.send();
+        setInterval(function() {
+            output.textContent = xhr.responseText ? xhr.responseText : "no content";
+            output.scrollTop = output.scrollHeight;
+        }, 1000);
+    </script>
+
+</body>
+</html>
+

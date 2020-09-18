@@ -1,4 +1,14 @@
-/*
+# /*
+__pycache__
+.vscode
+2020*
+static
+*.log
+test.py
+
 ! gitlabtools.py
 ! project.json
 ! .gitignore
+! app.py
+! templates/
+! restart.sh
