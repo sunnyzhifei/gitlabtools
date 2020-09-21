@@ -21,8 +21,8 @@
             flag1=document.getElementById("merge")
     
             if (flag1.checked) {
-                document.getElementById("mergeValue").innerHTML="<input type='text' name='mergeSourceBranch' placeholder='source branch' style='width:100px'>\
-                <input type='text' name='mergeTargetBranch' placeholder='target branch' style='width:100px'> \
+                document.getElementById("mergeValue").innerHTML="<input type='text' name='mergeSourceBranch' placeholder='source branch' style='width:200px'>\
+                <input type='text' name='mergeTargetBranch' placeholder='target branch' style='width:200px'> \
                 <input type='text' name='mergeMessage' placeholder='merge message' style='width:350px'>"
             } else {
                 document.getElementById("mergeValue").innerHTML=""
@@ -32,8 +32,8 @@
             flag1=document.getElementById("pipline")
     
             if (flag1.checked) {
-                document.getElementById("piplineValue").innerHTML="<input type='text' name='piplineBranch' placeholder='pipline branch' style='width:100px'>\
-                <input type='text' name='piplineEnvironment' placeholder='environment' style='width:100px'>"
+                document.getElementById("piplineValue").innerHTML="<input type='text' name='piplineBranch' placeholder='pipline trigger branch' style='width:200px'>\
+                <input type='text' name='piplineEnvironment' placeholder='environment: dev、test、master' style='width:200px'>"
             } else {
                 document.getElementById("piplineValue").innerHTML=""
             }
