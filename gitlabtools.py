@@ -224,7 +224,10 @@ class GitLabTools():
         if output:
             output = json.loads(output.decode("utf-8"))
             if output.get("message"):
-                r_message = "".join(output["message"])
+                if isinstance(output["message"], str):
+                    r_message = "".join(output["message"])
+                else:
+                    r_message = output["message"]
                 logger.critical("{}, message: {}".format(info, r_message))
             elif output.get("state"):
                 state = str(output["state"])
@@ -298,7 +301,6 @@ class GitLabTools():
             cmd1 = r'curl --request POST  --header "PRIVATE-TOKEN: {token}" --header "Content-Type: application/json" "http://{gitlab_domain}/api/v4/projects/{project_id}/pipeline" '.format(**info) 
             url = "-d '{data}'".format(**info)
             cmd = cmd1 + url
-            print(cmd)
             self.doshell(cmd, "[%s] create pipline %s" %(self.projects[i], self.pipline_data))
 
 
