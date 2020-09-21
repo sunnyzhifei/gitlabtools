@@ -27,6 +27,16 @@
             } else {
                 document.getElementById("mergeValue").innerHTML=""
             }
+        };
+        function piplinef(){
+            flag1=document.getElementById("pipline")
+    
+            if (flag1.checked) {
+                document.getElementById("piplineValue").innerHTML="<input type='text' name='piplineBranch' placeholder='pipline branch' style='width:100px'>\
+                <input type='text' name='piplineEnvironment' placeholder='environment' style='width:100px'>"
+            } else {
+                document.getElementById("piplineValue").innerHTML=""
+            }
         }
     </script>
    
@@ -68,6 +78,11 @@
                 <input type="checkbox" name="merge" value="true" id="merge" onclick="mergef()"/> 
                 merge
                 <p id="mergeValue" style="display: inline;"></p>
+            </p>
+            <p style="display: inline;">
+                <input type="checkbox" name="pipline" value="true" id="pipline" onclick="piplinef()"/> 
+                pipline
+                <p id="piplineValue" style="display: inline;"></p>
             </p>
             <p style="text-align: center;padding-bottom: 10px;"><input type = "submit" value = "submit" /></p>
          </form>

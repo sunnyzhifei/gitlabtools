@@ -42,8 +42,9 @@ class GitLabTools():
         self.mergerequest = {}
         self.updaterequest = {"iid": "", "state_event": "close", "tbranch": "", "title": ""}
         self.time = datetime.datetime.now().strftime(r"%Y%m%d%H")
+        self.pipline_data={}
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:", ["help", "project=", "branch=", "job=", "download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge"])
+            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:-l:", ["help", "project=", "branch=", "job=", "line=","download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge"])
         except getopt.GetoptError:
             self.usage()
             sys.exit()
@@ -86,12 +87,14 @@ class GitLabTools():
                     self.updaterequest["title"] = update_request["title"][0]
                 if update_request.get("target_branch"):
                     self.updaterequest["tbranch"] = update_request["target_branch"][0]
+            elif opt in ("-l","--pipline"):
+                self.pipline_data = value
         # if not sys.argv[1:]:
         #     self.usage()
         #     sys.exit()
-        if not self.download and not self.createtag and not self.truncatetag and not self.mergerequest and not self.updaterequest:
+        if not self.download and not self.createtag and not self.truncatetag and not self.mergerequest and not self.updaterequest and not self.pipline_data:
             self.usage()
-            raise Exception("operate nedd  -d or -c or -t or -r -u")
+            raise Exception("operate nedd  -d or -c or -t or -r -u or -l")
         # if not self.projects:
         #     self.usage()
         #     raise Exception("miss project name ")
@@ -116,6 +119,7 @@ class GitLabTools():
             -m, --meassge            assign git commit tag message, example: -m "tag meassge"
             -r, --requestmerge       push and accept MR, example: -r "sb=test&tb=master&tt=testmerge"
             -u, --updatemerge        update MR by merge_iid, example: -u "iid=5&state_event=close&title=test&target_branch=master"
+            -l, --pipline            create pipline, example: -l '{"ref": "dev", "variables": [{"key": "env", "value": "dev"}]}'
 
         # 下载artifacts:  python ./gitlabtools.py -p ereport,base,wac-html,wac-manager,relation-graph-html -b test -d
         # 创建tag:  python ./gitlabtools.py -p ereport,base,wac-html,wac-manager,relation-graph-html -b test -c v2020090910 -m "信贷业务配置化v6.8.0和关系图谱v3.3.6"
@@ -232,8 +236,10 @@ class GitLabTools():
             else:
                 logger.critical(output)
             return output
+        elif not output and err:
+            logger.critical(info + " error: %s" %err.decode("utf-8"))
         else:
-            logger.critical(info + "success")
+            logger.critical(info + " success")
 
     def create_tag(self):
         if self.branch:
@@ -285,9 +291,21 @@ class GitLabTools():
             cmd = r'curl --request PUT  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/merge_requests/{iid}?{params}"'.format(**info)
             self.doshell(cmd, "[%s] update merge request[%s] " %(self.projects[i], info["iid"]))
 
+    def create_pipline(self):
+        # { "ref": "dev", "variables": [ {"key": "env", "value": "dev"}] }
+        for i, project  in enumerate(self.projects_id_list):
+            info = {"token": self.token, "gitlab_domain": self.gitlab_domain, "project_id": project, "data": self.pipline_data}
+            cmd1 = r'curl --request POST  --header "PRIVATE-TOKEN: {token}" --header "Content-Type: application/json" "http://{gitlab_domain}/api/v4/projects/{project_id}/pipeline" '.format(**info) 
+            url = "-d '{data}'".format(**info)
+            cmd = cmd1 + url
+            print(cmd)
+            self.doshell(cmd, "[%s] create pipline %s" %(self.projects[i], self.pipline_data))
+
+
 
 if __name__ == "__main__":
     gitlab = GitLabTools()
+    print(gitlab.pipline_data)
     if gitlab.download:
         gitlab.download_by_shell()
     if gitlab.createtag:
@@ -298,3 +316,5 @@ if __name__ == "__main__":
         gitlab.request_merge()
     if gitlab.updaterequest["iid"]:
         gitlab.update_merge()
+    if gitlab.pipline_data:
+        gitlab.create_pipline()

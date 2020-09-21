@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, request, render_template
 from gitlabtools import GitLabTools,logger
 import os
 from time import sleep
+import json
 #from flask_cors import *
 app = Flask(__name__)
 
@@ -27,7 +28,11 @@ def gitlab():
         mergeSourceBranch = result.get("mergeSourceBranch")
         mergeTargetBranch = result.get("mergeTargetBranch")
         mergeMessage = result.get("mergeMessage")
-
+        pipline = result.get("pipline")
+        piplineBranch = result.get("piplineBranch")
+        piplineEnvironment = result.get("piplineEnvironment")
+        pipline_data = json.dumps({"ref":piplineBranch,"variables":[{"key":"env","value":piplineEnvironment}]})
+        
         gitlab = GitLabTools()
         gitlab.projects = list(filter(None, project.split(",")))
         gitlab.projects_id_list = gitlab.get_project()
@@ -41,6 +46,7 @@ def gitlab():
         gitlab.mergerequest["sbranch"] = mergeSourceBranch
         gitlab.mergerequest["tbranch"] = mergeTargetBranch
         gitlab.mergerequest["title"] = mergeMessage
+        gitlab.pipline_data = pipline_data
 
 
         if download:
@@ -49,6 +55,8 @@ def gitlab():
             gitlab.create_tag()
         if merge:
             gitlab.request_merge()
+        if pipline:
+            gitlab.create_pipline()
    return "gitlab"
 
 @app.route('/stream')
@@ -63,4 +71,4 @@ def stream():
 
 
 if __name__ == '__main__':
-   app.run(debug=False, host="192.168.10.219", port=54321)
+   app.run(debug=False, host="0.0.0.0", port=54321)
