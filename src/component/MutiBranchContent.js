@@ -30,13 +30,20 @@ class MutiBranchContent extends Component {
   }
 
   state = {
-    data: [],
-    value: [],
-    fetching: false,
+    project:{
+      data: [],
+      value: [],
+      fetching: false
+    },
+    branch:{
+      data: [],
+      value: [],
+      fetching: false
+    }
   };
 
   fetchProject = (value) => {
-    this.setState({ data: [], fetching: true });
+    this.setState({ project: {data: [], fetching: true }});
     axios
       .get("http://git.iwellmass.com/api/v4/search", {
         params: {
@@ -48,13 +55,13 @@ class MutiBranchContent extends Component {
       .then((response) => {
         // console.log(response.data)
         const data = response.data.map((item) => {
-          let data1 = [...this.state.data];
+          let data1 = [...this.state.project.data];
           data1.push(item.path_with_namespace);
           return data1;
         });
         const data2 = data.length ? data : ["not found"];
         console.log(data2);
-        this.setState({ data: data2, fetching: false });
+        this.setState({ project: {data: data2, fetching: false }});
       })
       .catch((err) => {
         console.log(err);
@@ -62,9 +69,11 @@ class MutiBranchContent extends Component {
   };
 
   fetchBranch = (value) => {
-    this.setState({ data: [], fetching: true });
+    console.log("fetch",this.state)
+    const projectname = this.state.project.value
+    this.setState({branch: {data: [], fetching: true }});
     axios
-      .get("http://git.iwellmass.com/api/v4/search", {
+      .get(`http://git.iwellmass.com/api/v4/projects/${projectname}}/repository/branches`, {
         // /projects/5/repository/branches
         params: {
           scope: "projects",
@@ -75,13 +84,13 @@ class MutiBranchContent extends Component {
       .then((response) => {
         // console.log(response.data)
         const data = response.data.map((item) => {
-          let data1 = [...this.state.data];
+          let data1 = [...this.state.branch.data];
           data1.push(item.path_with_namespace);
           return data1;
         });
         const data2 = data.length ? data : ["not found"];
         console.log(data2);
-        this.setState({ data: data2, fetching: false });
+        this.setState({ branch:{ data: data2, fetching: false }});
       })
       .catch((err) => {
         console.log(err);
@@ -90,24 +99,28 @@ class MutiBranchContent extends Component {
 
   handleBranchChange = (value) => {
     this.setState({
-      value,
-      data: [],
-      fetching: false,
+      branch:{
+        value,
+        data: [],
+        fetching: false
+    }
     });
     console.log(this.state)
   };
 
   handleProjectChange = (value) => {
     this.setState({
-      value,
-      data: [],
-      fetching: false,
+      project:{
+        value,
+        data: [],
+        fetching: false
+    }
     });
     console.log(this.state)
   };
 
   render() {
-    const { fetching, data, value } = this.state;
+    const { project,branch } = this.state;
     return (
       <Form {...layout} name="nest-messages" onFinish={onFinish} initialValues={{"project":[{
       }]}}>
@@ -128,15 +141,15 @@ class MutiBranchContent extends Component {
                       >
                       <Select
                         showSearch
-                        value={value}
+                        value={project.value}
                         placeholder="Select Project"
-                        notFoundContent={fetching ? <Spin size="small" /> : null}
+                        // notFoundContent={project.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
                         onSearch={this.fetchProject}
                         onChange={this.handleProjectChange}
                         style={{ width: "300px" }}
                       >
-                        {data.map((d) => (
+                        {project.data.map((d) => (
                           <Option key={d}>{d}</Option>
                         ))}
                       </Select>
@@ -150,19 +163,19 @@ class MutiBranchContent extends Component {
                       name={[field.name, 'branch']}
                       fieldKey={[field.fieldKey, 'branch']}
                       key={[field.fieldKey, 'branch']}
-                      rules={[{ required: true, message: 'missing project branch' }]}
+                      // rules={[{ required: true, message: 'missing project branch' }]}
                       >
                       <Select
                         showSearch
-                        value={value}
+                        value={branch.value}
                         placeholder="Select Branch"
-                        notFoundContent={fetching ? <Spin size="small" /> : null}
+                        notFoundContent={branch.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
                         onSearch={this.fetchBranch}
                         onChange={this.handleBranchChange}
                         style={{ width: "300px" }}
                       >
-                        {data.map((d) => (
+                        {branch.data.map((d) => (
                           <Option key={d}>{d}</Option>
                         ))}
                       </Select>
