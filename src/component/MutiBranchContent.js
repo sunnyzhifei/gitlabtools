@@ -60,7 +60,7 @@ class MutiBranchContent extends Component {
           return data1;
         });
         const data2 = data.length ? data : ["not found"];
-        console.log(data2);
+        console.log("project: ", data2);
         this.setState({ project: {data: data2, fetching: false }});
       })
       .catch((err) => {
@@ -68,24 +68,20 @@ class MutiBranchContent extends Component {
       });
   };
 
-  fetchBranch = (value) => {
-    console.log("fetch",this.state)
-    const projectname = this.state.project.value
+  fetchBranch = () => {
+    console.log("fetch branch",this.state)
+    const projectname = this.state.project.value.replace("/","%2F")
+    console.log("projectname: ",projectname)
     this.setState({branch: {data: [], fetching: true }});
     axios
-      .get(`http://git.iwellmass.com/api/v4/projects/${projectname}}/repository/branches`, {
-        // /projects/5/repository/branches
-        params: {
-          scope: "projects",
-          search: value,
-        },
+      .get(`http://git.iwellmass.com/api/v4/projects/${projectname}/repository/branches`, {
         headers: headers,
       })
       .then((response) => {
         // console.log(response.data)
         const data = response.data.map((item) => {
           let data1 = [...this.state.branch.data];
-          data1.push(item.path_with_namespace);
+          data1.push(item.name);
           return data1;
         });
         const data2 = data.length ? data : ["not found"];
@@ -97,16 +93,15 @@ class MutiBranchContent extends Component {
       });
   };
 
-  handleBranchChange = (value) => {
-    this.setState({
-      branch:{
-        value,
-        data: [],
-        fetching: false
-    }
-    });
-    console.log(this.state)
-  };
+  // handleBranchChange = (value) => {
+  //   this.setState({
+  //     branch:{
+  //       value,
+  //       data: [],
+  //       fetching: false
+  //     }
+  //   })
+  // };
 
   handleProjectChange = (value) => {
     this.setState({
@@ -114,9 +109,8 @@ class MutiBranchContent extends Component {
         value,
         data: [],
         fetching: false
-    }
+      }
     });
-    console.log(this.state)
   };
 
   render() {
@@ -143,7 +137,7 @@ class MutiBranchContent extends Component {
                         showSearch
                         value={project.value}
                         placeholder="Select Project"
-                        // notFoundContent={project.fetching ? <Spin size="small" /> : null}
+                        notFoundContent={project.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
                         onSearch={this.fetchProject}
                         onChange={this.handleProjectChange}
@@ -166,13 +160,13 @@ class MutiBranchContent extends Component {
                       // rules={[{ required: true, message: 'missing project branch' }]}
                       >
                       <Select
-                        showSearch
+                        // showSearch
                         value={branch.value}
                         placeholder="Select Branch"
                         notFoundContent={branch.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
-                        onSearch={this.fetchBranch}
-                        onChange={this.handleBranchChange}
+                        // onSearch={this.fetchBranch}
+                        onClick={this.fetchBranch}
                         style={{ width: "300px" }}
                       >
                         {branch.data.map((d) => (
