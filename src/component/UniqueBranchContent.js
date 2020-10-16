@@ -1,6 +1,7 @@
 import React, { Component } from "react";
+// import ReactDOM from 'react-dom';
 import ".././App.css";
-import { Form, Input, Checkbox, Button } from "antd";
+import { Form, Input, Checkbox, Button, message } from "antd";
 import { Select, Spin } from "antd";
 import debounce from "lodash/debounce";
 import axios from "axios";
@@ -18,22 +19,37 @@ const layout = {
   },
 };
 
-const onFinish = (values) => {
-  console.log(values);
-};
-
 class BranchContent extends Component {
+  
   constructor(props) {
     super(props);
     this.fetchProject = debounce(this.fetchProject, 800);
   }
-
+  
   state = {
+    loading: false,
     data: [],
     value: [],
     fetching: false,
   };
 
+  onFinish = (values) => {
+    this.setState({loading: true})
+    const form = values
+    form.type = "uniquebranch"
+    console.log("form: ",form)
+    axios
+      .post("http://localhost:54321/gitlab", 
+        form
+      )
+      .then((res)=>{
+        message.success(res.data.message)
+        this.setState({loading: false})
+      })
+      .catch((e)=>{
+        message.error(e)
+      })
+  };
   fetchProject = (value) => {
     this.setState({ data: [], fetching: true });
     axios
@@ -51,7 +67,7 @@ class BranchContent extends Component {
           data1.push(item.path_with_namespace);
           return data1;
         });
-        const data2 = data.length ? data : ["not found"];
+        const data2 = data.length ? data : ["none"];
         console.log(data2);
         this.setState({ data: data2, fetching: false });
       })
@@ -69,9 +85,10 @@ class BranchContent extends Component {
   };
 
   render() {
-    const { fetching, data, value } = this.state;
+    const { fetching, data, value , loading} = this.state;
     return (
-      <Form {...layout} name="nest-messages" onFinish={onFinish}>
+      <>
+      <Form {...layout} name="nest-messages" onFinish={this.onFinish}>
         <Form.Item 
           name={"branch"} 
           label="branch" 
@@ -142,21 +159,21 @@ class BranchContent extends Component {
         <Form.Item
           name={"pipline"}
           label="pipline"
-          initialValue="test"
           valuePropName="value"
         >
-          <Select defaultValue="test" style={{ width: 120 }}>
+          <Select style={{ width: 120 }} allowClear="true">
             <Option value="dev">dev</Option>
             <Option value="test">test</Option>
             <Option value="master">master</Option>
           </Select>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 7 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             Submit
           </Button>
         </Form.Item>
       </Form>
+      </>
     );
   }
 }

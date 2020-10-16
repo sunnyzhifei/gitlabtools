@@ -1,0 +1,211 @@
+nohup: ignoring input
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://192.168.10.219:54321/ (Press CTRL+C to quit)
+192.168.10.203 - - [14/Sep/2020 23:55:31] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.203 - - [14/Sep/2020 23:55:32] "[37mGET /stream HTTP/1.1[0m" 200 -
+2020-09-14 23:56:41,349 - gitlabtools.py[line:199] - CRITICAL: [base] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 31  219M   31 68.6M    0     0   124M      0  0:00:01 --:--:--  0:00:01  124M100  219M  100  219M    0     0   144M      0  0:00:01  0:00:01 --:--:--  144M
+curl: Saved to filename 'artifact-base-server-25200.zip'
+2020-09-14 23:56:42,890 - gitlabtools.py[line:204] - CRITICAL: [base] artifact download finished
+2020-09-14 23:56:44,172 - gitlabtools.py[line:224] - CRITICAL: [base] create tag[aaa] , message: tagmess
+192.168.10.203 - - [14/Sep/2020 23:56:44] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-14 23:57:09,063 - gitlabtools.py[line:199] - CRITICAL: [base] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0Warning: Refusing to overwrite artifact-base-server-25200.zip: File exists
+  0  219M    0 11675    0     0   157k      0  0:23:43 --:--:--  0:23:43  158k
+curl: (23) Failed writing body (0 != 11675)
+2020-09-14 23:57:09,159 - gitlabtools.py[line:204] - CRITICAL: [base] artifact download finished
+2020-09-14 23:57:09,859 - gitlabtools.py[line:224] - CRITICAL: [base] create tag[aaa] , message: Tag aaa already exists
+192.168.10.203 - - [14/Sep/2020 23:57:09] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-14 23:57:16,133 - gitlabtools.py[line:199] - CRITICAL: [base] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0Warning: Refusing to overwrite artifact-base-server-25200.zip: File exists
+  0  219M    0 13123    0     0   201k      0  0:18:34 --:--:--  0:18:34  203k
+curl: (23) Failed writing body (0 != 13123)
+2020-09-14 23:57:16,223 - gitlabtools.py[line:204] - CRITICAL: [base] artifact download finished
+2020-09-14 23:57:16,898 - gitlabtools.py[line:224] - CRITICAL: [base] create tag[aaa] , message: Tag aaa already exists
+192.168.10.203 - - [14/Sep/2020 23:57:16] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 09:29:42] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 09:29:42] "[37mGET /stream HTTP/1.1[0m" 200 -
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://192.168.10.219:54321/ (Press CTRL+C to quit)
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://192.168.10.219:54321/ (Press CTRL+C to quit)
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+ * Running on http://192.168.10.219:54321/ (Press CTRL+C to quit)
+192.168.10.52 - - [15/Sep/2020 10:20:12] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 10:20:13] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 12:36:36] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 12:36:37] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 13:09:12] "[37mGET / HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 13:09:13] "[37mGET /stream HTTP/1.0[0m" 200 -
+192.168.10.167 - - [15/Sep/2020 15:26:35] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.167 - - [15/Sep/2020 15:26:35] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.167 - - [15/Sep/2020 15:26:37] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+192.168.10.167 - - [15/Sep/2020 16:32:16] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:48:23] "[37mGET / HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:48:23] "[37mGET /stream HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:48:48] "[37mGET / HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:48:48] "[37mGET /stream HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:48:49] "[33mGET /favicon.ico HTTP/1.0[0m" 404 -
+192.168.10.201 - - [15/Sep/2020 16:48:57] "[37mGET / HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:48:58] "[37mGET /stream HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:49:39] "[37mPOST /gitlab HTTP/1.0[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 16:50:04] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 16:50:04] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 16:50:05] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+192.168.10.201 - - [15/Sep/2020 16:50:19] "[37mGET / HTTP/1.0[0m" 200 -
+192.168.10.201 - - [15/Sep/2020 16:50:19] "[37mGET /stream HTTP/1.0[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 16:50:26] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 16:50:26] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 16:59:41] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 16:59:41] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.167 - - [15/Sep/2020 17:14:02] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.167 - - [15/Sep/2020 17:14:02] "[37mGET /stream HTTP/1.1[0m" 200 -
+2020-09-15 17:18:57,265 - gitlabtools.py[line:208] - CRITICAL: [galilei] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 18  442M   18 81.6M    0     0   129M      0  0:00:03 --:--:--  0:00:03  129M 54  442M   54  242M    0     0   148M      0  0:00:02  0:00:01  0:00:01  148M 93  442M   93  413M    0     0   156M      0  0:00:02  0:00:02 --:--:--  156M100  442M  100  442M    0     0   157M      0  0:00:02  0:00:02 --:--:--  157M
+curl: Saved to filename 'artifact-galilei-server-25267.zip'
+2020-09-15 17:19:00,092 - gitlabtools.py[line:213] - CRITICAL: [galilei] artifact download finished
+2020-09-15 17:19:00,093 - gitlabtools.py[line:208] - CRITICAL: [data-factory] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 14  210M   14 29.8M    0     0  36.9M      0  0:00:05 --:--:--  0:00:05 36.9M 36  210M   36 77.4M    0     0  42.8M      0  0:00:04  0:00:01  0:00:03 42.8M 60  210M   60  127M    0     0  45.4M      0  0:00:04  0:00:02  0:00:02 45.4M 80  210M   80  169M    0     0  44.5M      0  0:00:04  0:00:03  0:00:01 44.5M100  210M  100  210M    0     0  47.7M      0  0:00:04  0:00:04 --:--:-- 47.7M
+curl: Saved to filename 'artifact-data-factory-25262.zip'
+2020-09-15 17:19:04,518 - gitlabtools.py[line:213] - CRITICAL: [data-factory] artifact download finished
+2020-09-15 17:19:04,519 - gitlabtools.py[line:208] - CRITICAL: [base] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  9  219M    9 20.4M    0     0  53.2M      0  0:00:04 --:--:--  0:00:04 53.2M 27  219M   27 60.0M    0     0  43.4M      0  0:00:05  0:00:01  0:00:04 43.4M 67  219M   67  148M    0     0  62.1M      0  0:00:03  0:00:02  0:00:01 62.1M100  219M  100  219M    0     0  71.7M      0  0:00:03  0:00:03 --:--:-- 71.7M
+curl: Saved to filename 'artifact-base-server-25263.zip'
+2020-09-15 17:19:07,594 - gitlabtools.py[line:213] - CRITICAL: [base] artifact download finished
+2020-09-15 17:19:07,594 - gitlabtools.py[line:208] - CRITICAL: [self-analysis-platform-html] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0100 7131k  100 7131k    0     0  69.2M      0 --:--:-- --:--:-- --:--:-- 69.6M
+curl: Saved to filename 'artifact-self-analysis-platform-html-25271.zip'
+2020-09-15 17:19:07,713 - gitlabtools.py[line:213] - CRITICAL: [self-analysis-platform-html] artifact download finished
+2020-09-15 17:19:07,819 - gitlabtools.py[line:231] - CRITICAL: galilei get commit_id, status: success
+2020-09-15 17:19:10,223 - gitlabtools.py[line:224] - CRITICAL: [galilei] create tag[数据中台v0.17.0] , message: 数据中台v0.17.0
+2020-09-15 17:19:10,420 - gitlabtools.py[line:231] - CRITICAL: data-factory get commit_id, status: success
+2020-09-15 17:19:14,656 - gitlabtools.py[line:224] - CRITICAL: [data-factory] create tag[数据中台v0.17.0] , message: 数据中台v0.17.0
+2020-09-15 17:19:14,756 - gitlabtools.py[line:231] - CRITICAL: base get commit_id, status: success
+2020-09-15 17:19:16,472 - gitlabtools.py[line:224] - CRITICAL: [base] create tag[数据中台v0.17.0] , message: 数据中台v0.17.0
+2020-09-15 17:19:16,566 - gitlabtools.py[line:231] - CRITICAL: self-analysis-platform-html get commit_id, status: success
+2020-09-15 17:19:18,869 - gitlabtools.py[line:224] - CRITICAL: [self-analysis-platform-html] create tag[数据中台v0.17.0] , message: 数据中台v0.17.0
+2020-09-15 17:19:22,657 - gitlabtools.py[line:228] - CRITICAL: merge request[数据中台v0.17.0] , state: opened, iid: 48
+2020-09-15 17:19:30,488 - gitlabtools.py[line:228] - CRITICAL: [galilei] merge accept merge request[数据中台v0.17.0] , state: merged, iid: 48
+2020-09-15 17:19:33,872 - gitlabtools.py[line:228] - CRITICAL: merge request[数据中台v0.17.0] , state: opened, iid: 40
+2020-09-15 17:19:40,707 - gitlabtools.py[line:228] - CRITICAL: [data-factory] merge accept merge request[数据中台v0.17.0] , state: merged, iid: 40
+2020-09-15 17:19:41,710 - gitlabtools.py[line:228] - CRITICAL: merge request[数据中台v0.17.0] , state: opened, iid: 49
+2020-09-15 17:19:48,618 - gitlabtools.py[line:228] - CRITICAL: [base] merge accept merge request[数据中台v0.17.0] , state: merged, iid: 49
+2020-09-15 17:19:50,729 - gitlabtools.py[line:228] - CRITICAL: merge request[数据中台v0.17.0] , state: opened, iid: 109
+2020-09-15 17:19:57,638 - gitlabtools.py[line:228] - CRITICAL: [self-analysis-platform-html] merge accept merge request[数据中台v0.17.0] , state: merged, iid: 109
+192.168.10.167 - - [15/Sep/2020 17:19:57] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+[2020-09-15 17:25:09,808] ERROR in app: Exception on /gitlab [POST]
+Traceback (most recent call last):
+  File "/usr/local/lib64/python3.6/site-packages/flask/app.py", line 2447, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib64/python3.6/site-packages/flask/app.py", line 1952, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib64/python3.6/site-packages/flask/app.py", line 1821, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/usr/local/lib64/python3.6/site-packages/flask/_compat.py", line 39, in reraise
+    raise value
+  File "/usr/local/lib64/python3.6/site-packages/flask/app.py", line 1950, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib64/python3.6/site-packages/flask/app.py", line 1936, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "app.py", line 47, in gitlab
+    gitlab.download_by_shell()
+  File "/opt/gitlabtools/gitlabtools.py", line 215, in download_by_shell
+    raise Exception("download exception")
+Exception: download exception
+192.168.10.167 - - [15/Sep/2020 17:25:09] "[35m[1mPOST /gitlab HTTP/1.1[0m" 500 -
+2020-09-15 17:25:42,111 - gitlabtools.py[line:208] - CRITICAL: [metabase] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 43  199M   43 85.8M    0     0   109M      0  0:00:01 --:--:--  0:00:01  109M100  199M  100  199M    0     0   113M      0  0:00:01  0:00:01 --:--:--  113M
+curl: Saved to filename 'artifact-superbi-25272.zip'
+2020-09-15 17:25:43,893 - gitlabtools.py[line:213] - CRITICAL: [metabase] artifact download finished
+2020-09-15 17:25:43,993 - gitlabtools.py[line:231] - CRITICAL: metabase get commit_id, status: success
+2020-09-15 17:25:45,967 - gitlabtools.py[line:224] - CRITICAL: [metabase] create tag[数据中台v0.17.0] , message: 数据中台v0.17.0
+192.168.10.167 - - [15/Sep/2020 17:25:45] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-15 17:46:50,373 - gitlabtools.py[line:199] - CRITICAL: [idc] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 29  107M   29 31.9M    0     0  60.4M      0  0:00:01 --:--:--  0:00:01 60.4M100  107M  100  107M    0     0  81.9M      0  0:00:01  0:00:01 --:--:-- 81.9M
+curl: Saved to filename 'artifact-idc-server-24793.zip'
+2020-09-15 17:46:51,710 - gitlabtools.py[line:204] - CRITICAL: [idc] artifact download finished
+2020-09-15 17:46:51,711 - gitlabtools.py[line:199] - CRITICAL: [data-factory-html] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 58 7815k   58 4609k    0     0  23.5M      0 --:--:-- --:--:-- --:--:-- 23.5M100 7815k  100 7815k    0     0  36.0M      0 --:--:-- --:--:-- --:--:-- 36.0M
+curl: Saved to filename 'artifact-data-factory-html-24838.zip'
+2020-09-15 17:46:51,942 - gitlabtools.py[line:204] - CRITICAL: [data-factory-html] artifact download finished
+2020-09-15 17:46:53,233 - gitlabtools.py[line:224] - CRITICAL: [idc] create tag[数据中台v0.17.0] , message: 数据中台v0.17.0
+2020-09-15 17:46:54,649 - gitlabtools.py[line:224] - CRITICAL: [data-factory-html] create tag[数据中台v0.17.0] , message: 数据中台v0.17.0
+192.168.10.167 - - [15/Sep/2020 17:46:54] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-15 17:48:19,467 - gitlabtools.py[line:228] - CRITICAL: merge request[数据中台v0.17.0] , state: opened, iid: 17
+2020-09-15 17:48:26,445 - gitlabtools.py[line:228] - CRITICAL: [idc] merge accept merge request[数据中台v0.17.0] , state: merged, iid: 17
+2020-09-15 17:48:27,892 - gitlabtools.py[line:228] - CRITICAL: merge request[数据中台v0.17.0] , state: opened, iid: 47
+2020-09-15 17:48:34,931 - gitlabtools.py[line:228] - CRITICAL: [data-factory-html] merge accept merge request[数据中台v0.17.0] , state: merged, iid: 47
+192.168.10.167 - - [15/Sep/2020 17:48:34] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 18:10:29] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [15/Sep/2020 18:10:30] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 10:06:34] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 10:06:35] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 10:06:36] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+192.168.10.52 - - [16/Sep/2020 11:25:54] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 11:25:54] "[37mGET /stream HTTP/1.1[0m" 200 -
+2020-09-16 11:26:31,496 - gitlabtools.py[line:228] - CRITICAL: merge request[merge master to model-analysis] , state: opened, iid: 40
+2020-09-16 11:26:36,576 - gitlabtools.py[line:224] - CRITICAL: [wac-manager] merge accept merge request[merge master to model-analysis] , message: 405 Method Not Allowed
+192.168.10.52 - - [16/Sep/2020 11:26:36] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 11:40:58] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 11:40:58] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 15:23:29] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 15:23:30] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [16/Sep/2020 15:23:32] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+2020-09-16 15:24:54,562 - gitlabtools.py[line:228] - CRITICAL: merge request[master to feature_jump_mind] , state: opened, iid: 50
+2020-09-16 15:25:01,445 - gitlabtools.py[line:228] - CRITICAL: [base] merge accept merge request[master to feature_jump_mind] , state: merged, iid: 50
+192.168.10.52 - - [16/Sep/2020 15:25:01] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-16 15:25:23,772 - gitlabtools.py[line:228] - CRITICAL: merge request[master to feature-indicator-group] , state: opened, iid: 30
+2020-09-16 15:25:30,632 - gitlabtools.py[line:228] - CRITICAL: [ereport] merge accept merge request[master to feature-indicator-group] , state: merged, iid: 30
+192.168.10.52 - - [16/Sep/2020 15:25:30] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-16 15:25:52,542 - gitlabtools.py[line:228] - CRITICAL: merge request[master to feature-indicator-group] , state: opened, iid: 54
+2020-09-16 15:25:59,394 - gitlabtools.py[line:228] - CRITICAL: [sys] merge accept merge request[master to feature-indicator-group] , state: merged, iid: 54
+192.168.10.52 - - [16/Sep/2020 15:25:59] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-16 15:35:20,002 - gitlabtools.py[line:228] - CRITICAL: merge request[test to feature-indicator-group] , state: opened, iid: 31
+2020-09-16 15:35:26,737 - gitlabtools.py[line:228] - CRITICAL: [ereport] merge accept merge request[test to feature-indicator-group] , state: merged, iid: 31
+192.168.10.52 - - [16/Sep/2020 15:35:26] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-18 09:12:36,096 - gitlabtools.py[line:228] - CRITICAL: merge request[master to feature-indicator-group] , state: opened, iid: 19
+2020-09-18 09:12:42,750 - gitlabtools.py[line:228] - CRITICAL: [ice] merge accept merge request[master to feature-indicator-group] , state: merged, iid: 19
+192.168.10.52 - - [18/Sep/2020 09:12:42] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+2020-09-18 09:13:00,661 - gitlabtools.py[line:228] - CRITICAL: merge request[master to test] , state: opened, iid: 20
+2020-09-18 09:13:07,479 - gitlabtools.py[line:228] - CRITICAL: [ice] merge accept merge request[master to test] , state: merged, iid: 20
+192.168.10.52 - - [18/Sep/2020 09:13:07] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+192.168.10.52 - - [18/Sep/2020 13:40:01] "[37mGET / HTTP/1.1[0m" 200 -
+192.168.10.52 - - [18/Sep/2020 13:40:02] "[37mGET /gitlab HTTP/1.1[0m" 200 -
+192.168.10.52 - - [18/Sep/2020 13:40:02] "[37mGET /stream HTTP/1.1[0m" 200 -
+192.168.10.52 - - [18/Sep/2020 13:40:05] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -

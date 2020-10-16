@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import ".././App.css";
-import { Form, Input, Checkbox, Button, Space } from "antd";
+import { Form, Input, Checkbox, Button, message } from "antd";
 import { Select, Spin } from "antd";
 import debounce from "lodash/debounce";
 import axios from "axios";
@@ -19,17 +19,15 @@ const layout = {
   },
 };
 
-const onFinish = (values) => {
-  console.log(values);
-};
-
 class MutiBranchContent extends Component {
   constructor(props) {
     super(props);
     this.fetchProject = debounce(this.fetchProject, 800);
+    this.fetchBranch = debounce(this.fetchBranch, 800);
   }
 
   state = {
+    loading: false,
     project:{
       data: [],
       value: [],
@@ -40,6 +38,24 @@ class MutiBranchContent extends Component {
       value: [],
       fetching: false
     }
+  };
+
+  onFinish = (values) => {
+    this.setState({loading: true})
+    const form = values
+    form.type = "mutibranch"
+    console.log("form: ",form)
+    axios
+      .post("http://localhost:54321/gitlab", 
+        form
+      )
+      .then((res)=>{
+        message.success(res.data.message)
+        this.setState({loading: false})
+      })
+      .catch((e)=>{
+        console.log("error: ",e)
+      })
   };
 
   fetchProject = (value) => {
@@ -53,14 +69,12 @@ class MutiBranchContent extends Component {
         headers: headers,
       })
       .then((response) => {
-        // console.log(response.data)
         const data = response.data.map((item) => {
           let data1 = [...this.state.project.data];
           data1.push(item.path_with_namespace);
           return data1;
         });
-        const data2 = data.length ? data : ["not found"];
-        console.log("project: ", data2);
+        const data2 = data.length ? data : ["none"];
         this.setState({ project: {data: data2, fetching: false }});
       })
       .catch((err) => {
@@ -68,40 +82,37 @@ class MutiBranchContent extends Component {
       });
   };
 
-  fetchBranch = () => {
-    console.log("fetch branch",this.state)
-    const projectname = this.state.project.value.replace("/","%2F")
-    console.log("projectname: ",projectname)
-    this.setState({branch: {data: [], fetching: true }});
-    axios
-      .get(`http://git.iwellmass.com/api/v4/projects/${projectname}/repository/branches`, {
-        headers: headers,
-      })
-      .then((response) => {
-        // console.log(response.data)
-        const data = response.data.map((item) => {
-          let data1 = [...this.state.branch.data];
-          data1.push(item.name);
-          return data1;
-        });
-        const data2 = data.length ? data : ["not found"];
-        console.log(data2);
-        this.setState({ branch:{ data: data2, fetching: false }});
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  fetchBranch = (value) => {
+    console.log(this.state.project.value)
+    if(this.state.project.value.length){
+      if (this.state.project.value!=="none"){
+        const projectname = this.state.project.value.replace("/","%2F")
+        this.setState({branch: {data: [], fetching: true }});
+        axios
+          .get(`http://git.iwellmass.com/api/v4/projects/${projectname}/repository/branches`, {
+            params: {
+              per_page: 500,
+              search: value
+            },
+            headers: headers,
+          })
+          .then((response) => {
+            const data = response.data.map((item) => {
+              let data1 = [...this.state.branch.data];
+              data1.push(item.name);
+              return data1;
+            });
+            this.setState({ branch:{ data: data, fetching: false }});
+          })
+          .catch((err) => {
+            console.log("err:",err);
+          });
+      }else {
+        this.setState({ branch:{ data: ["none"], fetching: false }});
+      }
 
-  // handleBranchChange = (value) => {
-  //   this.setState({
-  //     branch:{
-  //       value,
-  //       data: [],
-  //       fetching: false
-  //     }
-  //   })
-  // };
+    }
+  };
 
   handleProjectChange = (value) => {
     this.setState({
@@ -113,10 +124,20 @@ class MutiBranchContent extends Component {
     });
   };
 
+  handleBranchChange = (value) => {
+    this.setState({
+      branch:{
+        value,
+        data: [],
+        fetching: false
+      }
+    });
+  };
+
   render() {
-    const { project,branch } = this.state;
+    const { project,branch,loading } = this.state;
     return (
-      <Form {...layout} name="nest-messages" onFinish={onFinish} initialValues={{"project":[{
+      <Form {...layout} name="nest-messages" onFinish={this.onFinish} initialValues={{"project":[{
       }]}}>
         <Form.List name="project" >
         {(fields, { add, remove }) => {
@@ -124,17 +145,18 @@ class MutiBranchContent extends Component {
             <div>
               {fields.map((field,index) => (
                 <>
-                  <Form.Item className="myant-form-item"  label={index === 0 ? 'project' : 'project'+index} key={index}>
+                  <Form.Item className="myant-form-item"  label={index === 0 ? 'project' : 'project'+index} key={"project"+index}>
                     <Input.Group compact>
                       <Form.Item 
                       {...field}
                       name={[field.name, 'name']}
                       fieldKey={[field.fieldKey, 'name']}
-                      key={[field.fieldKey, 'name']}
+                      key={[field.fieldKey, 'name'+index]}
                       rules={[{ required: true, message: 'missing project name' }]}
                       >
                       <Select
                         showSearch
+                        allowClear
                         value={project.value}
                         placeholder="Select Project"
                         notFoundContent={project.fetching ? <Spin size="small" /> : null}
@@ -143,30 +165,27 @@ class MutiBranchContent extends Component {
                         onChange={this.handleProjectChange}
                         style={{ width: "300px" }}
                       >
-                        {project.data.map((d) => (
+                        {project.data.map((d,index) => (
                           <Option key={d}>{d}</Option>
                         ))}
                       </Select>
-                        {/* <Input
-                          placeholder="project name"
-                          style={{ display: "inline", width: "300px" }}
-                        /> */}
                       </Form.Item>
                       <Form.Item 
                       {...field}
                       name={[field.name, 'branch']}
                       fieldKey={[field.fieldKey, 'branch']}
-                      key={[field.fieldKey, 'branch']}
-                      // rules={[{ required: true, message: 'missing project branch' }]}
+                      key={[field.fieldKey, 'branch'+index]}
+                      rules={[{ required: true, message: 'missing project branch' }]}
                       >
                       <Select
-                        // showSearch
+                        showSearch
+                        allowClear
                         value={branch.value}
                         placeholder="Select Branch"
                         notFoundContent={branch.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
-                        // onSearch={this.fetchBranch}
-                        onClick={this.fetchBranch}
+                        onSearch={this.fetchBranch}
+                        onClick={this.handleBranchChange}
                         style={{ width: "300px" }}
                       >
                         {branch.data.map((d) => (
@@ -239,17 +258,16 @@ class MutiBranchContent extends Component {
         <Form.Item
           name={"pipline"}
           label="pipline"
-          initialValue="test"
           valuePropName="value"
         >
-          <Select defaultValue="test" style={{ width: 120 }}>
+          <Select  style={{ width: 120 }}>
             <Option value="dev">dev</Option>
             <Option value="test">test</Option>
             <Option value="master">master</Option>
           </Select>
         </Form.Item>
         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 7 }}>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" htmlType="submit" loading={loading}>
             Submit
           </Button>
         </Form.Item>
