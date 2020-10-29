@@ -43,52 +43,56 @@ class GitLabTools():
         self.updaterequest = {"iid": "", "state_event": "close", "tbranch": "", "title": ""}
         self.time = datetime.datetime.now().strftime(r"%Y%m%d%H")
         self.pipline_data={}
-        try:
-            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:-l:", ["help", "project=", "branch=", "job=", "line=","download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge"])
-        except getopt.GetoptError:
-            self.usage()
-            sys.exit()
-        for opt, value in opts:
-            if opt in ("-h", "--help"):
-                self.usage()
-                sys.exit()
-            elif opt in ("-p", "--project"):
-                self.projects = list(filter(None, value.split(",")))
-            elif opt in ("-b", "--branch"):
-                self.branch = value
-            elif opt in ("-j", "--job"):
-                self.jobs_id_list = list(filter(None, value.split(",")))
-            elif opt in ("-m", "--meassge"):
-                # self.meassge = re.sub(r"\s+","%20", value)
-                self.meassge = value
-            elif opt in ("-d", "--download"):
-                self.download = True
-            elif opt in ("-c", "--createtag"):
-                self.createtag = value
-            elif opt in ("-t", "--truncatetag"):
-                self.truncatetag = value
-            elif opt in ("-r", "--requestmerge"):
-                merge_request = parse.parse_qs(value)
-                if not merge_request.get("sb") or not merge_request.get("tb") or not merge_request.get("tt"):
-                    self.usage()
-                    raise Exception("merge requests miss args")
-                self.mergerequest["sbranch"] = merge_request["sb"][0]
-                self.mergerequest["tbranch"] = merge_request["tb"][0]
-                self.mergerequest["title"] = merge_request["tt"][0]
-            elif opt in ("-u", "--updatemerge"):
-                update_request = parse.parse_qs(value)
-                if not update_request.get("iid"):
-                    self.usage()
-                    raise Exception("update merge miss iid")
-                self.updaterequest["iid"] = update_request["iid"][0]
-                if update_request.get("state_event"):
-                    self.updaterequest["state_event"] = update_request["state_event"][0]
-                if update_request.get("title"):
-                    self.updaterequest["title"] = update_request["title"][0]
-                if update_request.get("target_branch"):
-                    self.updaterequest["tbranch"] = update_request["target_branch"][0]
-            elif opt in ("-l","--pipline"):
-                self.pipline_data = value
+        self.createBranch = False
+        self.createBranchName = ""
+        # try:
+        #     opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:-l:-f:", ["help", "project=", "branch=", "job=", "line=","download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge", "createbranch="])
+        # except getopt.GetoptError:
+        #     self.usage()
+        #     sys.exit()
+        # for opt, value in opts:
+        #     if opt in ("-h", "--help"):
+        #         self.usage()
+        #         sys.exit()
+        #     elif opt in ("-p", "--project"):
+        #         self.projects = list(filter(None, value.split(",")))
+        #     elif opt in ("-b", "--branch"):
+        #         self.branch = value
+        #     elif opt in ("-j", "--job"):
+        #         self.jobs_id_list = list(filter(None, value.split(",")))
+        #     elif opt in ("-m", "--meassge"):
+        #         # self.meassge = re.sub(r"\s+","%20", value)
+        #         self.meassge = value
+        #     elif opt in ("-d", "--download"):
+        #         self.download = True
+        #     elif opt in ("-c", "--createtag"):
+        #         self.createtag = value
+        #     elif opt in ("-t", "--truncatetag"):
+        #         self.truncatetag = value
+        #     elif opt in ("-r", "--requestmerge"):
+        #         merge_request = parse.parse_qs(value)
+        #         if not merge_request.get("sb") or not merge_request.get("tb") or not merge_request.get("tt"):
+        #             self.usage()
+        #             raise Exception("merge requests miss args")
+        #         self.mergerequest["sbranch"] = merge_request["sb"][0]
+        #         self.mergerequest["tbranch"] = merge_request["tb"][0]
+        #         self.mergerequest["title"] = merge_request["tt"][0]
+        #     elif opt in ("-u", "--updatemerge"):
+        #         update_request = parse.parse_qs(value)
+        #         if not update_request.get("iid"):
+        #             self.usage()
+        #             raise Exception("update merge miss iid")
+        #         self.updaterequest["iid"] = update_request["iid"][0]
+        #         if update_request.get("state_event"):
+        #             self.updaterequest["state_event"] = update_request["state_event"][0]
+        #         if update_request.get("title"):
+        #             self.updaterequest["title"] = update_request["title"][0]
+        #         if update_request.get("target_branch"):
+        #             self.updaterequest["tbranch"] = update_request["target_branch"][0]
+        #     elif opt in ("-l","--pipline"):
+        #         self.pipline_data = value
+        #     elif opt in ("-f","--createbranch"):
+        #         self.createbranch = value
         # if not sys.argv[1:]:
         #     self.usage()
         #     sys.exit()
@@ -303,11 +307,32 @@ class GitLabTools():
             cmd = cmd1 + url
             self.doshell(cmd, "[%s] create pipline %s" %(self.projects[i], self.pipline_data))
 
+    def create_branch(self):
+        if self.branch:
+            url_params = {"ref": self.branch, "branch": self.createBranchName}
+            for i, project in enumerate(self.projects_id_list):
+                info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "params": parse.urlencode(url_params)}
+                url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/repository/branches?{params}".format(**info)
+                cmd = r'curl --request POST --header "PRIVATE-TOKEN: {}" "{}"'.format(self.token, url)
+                self.doshell(cmd, "[%s] create branch[%s] by [%s] " %(self.projects[i], url_params["branch"], url_params["ref"]))
+        elif self.jobs_id_list:
+            print(self.projects_id_list)
+            for i, project in enumerate(self.projects_id_list):
+                info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
+                cmd1 = r'curl --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}"'.format(**info)
+                result = self.doshell(cmd1, "%s get commit_id" % self.projects[i])
+                if result:
+                    commit_sha = result["commit"]["short_id"]
+                    url_params = {"ref": commit_sha, "branch": self.createBranchName}
+                    info["params"] =  parse.urlencode(url_params)
+                    cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/branches?{params}"'.format(**info)
+                    self.doshell(cmd2, "[%s] create branch[%s] by [%s] " %(self.projects[i], url_params["branch"], url_params["ref"]))
+                else:
+                    logger.error("%s create tag is interrupted,because pre_cmd is faild" % self.projects[i])
 
 
 if __name__ == "__main__":
     gitlab = GitLabTools()
-    print(gitlab.pipline_data)
     if gitlab.download:
         gitlab.download_by_shell()
     if gitlab.createtag:
@@ -320,3 +345,5 @@ if __name__ == "__main__":
         gitlab.update_merge()
     if gitlab.pipline_data:
         gitlab.create_pipline()
+    if gitlab.createBranchName:
+        gitlab.create_branch()

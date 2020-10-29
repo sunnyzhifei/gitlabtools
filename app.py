@@ -24,6 +24,8 @@ def gitlab():
         createTag = result.get("createTag")
         createTagName = result.get("createTagName")
         createTagMessage = result.get("createTagMessage")
+        createBranch = result.get("createBranch")
+        createBranchName = result.get("createBranchName")
         merge = result.get("merge")
         mergeSourceBranch = result.get("mergeSourceBranch")
         mergeTargetBranch = result.get("mergeTargetBranch")
@@ -47,7 +49,7 @@ def gitlab():
         gitlab.mergerequest["tbranch"] = mergeTargetBranch
         gitlab.mergerequest["title"] = mergeMessage
         gitlab.pipline_data = pipline_data
-
+        gitlab.createBranchName = createBranchName
 
         if download:
             gitlab.download_by_shell()
@@ -57,6 +59,8 @@ def gitlab():
             gitlab.request_merge()
         if pipline:
             gitlab.create_pipline()
+        if createBranch:
+            gitlab.create_branch()
    return "gitlab"
 
 @app.route('/stream')

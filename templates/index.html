@@ -17,6 +17,15 @@
                 document.getElementById("createTagValue").innerHTML=""
             }
         };
+        function createBranchf(){
+            flag=document.getElementById("createBranch")
+    
+            if (flag.checked) {
+                document.getElementById("createBranchValue").innerHTML="<input type='text' name='createBranchName' placeholder='branch name' style='width:200px'>"
+            } else {
+                document.getElementById("createBranchValue").innerHTML=""
+            }
+        };
         function mergef(){
             flag1=document.getElementById("merge")
     
@@ -54,32 +63,46 @@
             background-color: aliceblue;
             margin-top: 0%;
             }
+        .opreateTags{
+            display: inline-block;
+            width: 120px;
+            margin: 0 auto;
+        }
     </style> 
 
 </head>
 <body >
     <div style="padding: 0 500px;">
         <form action="/gitlab" method="POST" target="targetIfr" style="width: 1000px;padding-top: 1px;background-color: darkkhaki;">
-            <p>Project <input type = "text" name = "project" style='width:350px'/></p>
-            <select name="select">
+            <p>
+                <p class="opreateTags">Project </p>
+                <input type = "text" name = "project" placeholder="git project name, eg: base,ereport" style='width:778px'/>
+            </p>
+            <select name="select" style="width: 90px;margin-right: 30px;">
                 <option value ="branch">Branch</option>
                 <option value ="job">Job</option>
             </select>
-            <input type = "text" name= "selectInput" style='width:350px'/>
-            <p>
-                <input type="checkbox" name="download" value="true" /> download artifacts
+            <input type = "text" name= "selectInput" placeholder="branch or jobids, eg: test or 25670,25634" style='width:560px'/>
+            <p >
+                <input type="checkbox" name="download" value="true" /> 
+                download artifacts
             </p>
-            <p style="display: inline;">
+            <p class="opreateTags">
                 <input type="checkbox" name="createTag" value="true" id="createTag" onclick="createTagf()"/> 
                 create tag
                 <p id="createTagValue" style="display: inline;"></p>
             </p>
-            <p style="display: inline;">
+            <p class="opreateTags">
+                <input type="checkbox" name="createBranch" value="true" id="createBranch" onclick="createBranchf()"/> 
+                create branch
+                <p id="createBranchValue" style="display: inline;"></p>
+            </p>
+            <p class="opreateTags">
                 <input type="checkbox" name="merge" value="true" id="merge" onclick="mergef()"/> 
                 merge
                 <p id="mergeValue" style="display: inline;"></p>
             </p>
-            <p style="display: inline;">
+            <p class="opreateTags">
                 <input type="checkbox" name="pipline" value="true" id="pipline" onclick="piplinef()"/> 
                 pipline
                 <p id="piplineValue" style="display: inline;"></p>
