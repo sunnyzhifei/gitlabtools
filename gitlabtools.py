@@ -43,6 +43,8 @@ class GitLabTools():
         self.updaterequest = {"iid": "", "state_event": "close", "tbranch": "", "title": ""}
         self.time = datetime.datetime.now().strftime(r"%Y%m%d%H")
         self.pipline_data={}
+        self.createBranch = False
+        self.createBranchName = ""
         try:
             opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:-l:", ["help", "project=", "branch=", "job=", "line=","download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge"])
         except getopt.GetoptError:
@@ -305,7 +307,28 @@ class GitLabTools():
             cmd = cmd1 + url
             self.doshell(cmd, "[%s] create pipline %s" %(self.projects[i].replace("%2F","/"), self.pipline_data))
 
-
+    def create_branch(self):
+        if self.branch:
+            url_params = {"ref": self.branch, "branch": self.createBranchName}
+            for i, project in enumerate(self.projects_id_list):
+                info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "params": parse.urlencode(url_params)}
+                url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/repository/branches?{params}".format(**info)
+                cmd = r'curl --request POST --header "PRIVATE-TOKEN: {}" "{}"'.format(self.token, url)
+                self.doshell(cmd, "[%s] create branch[%s] by [%s] " %(self.projects[i], url_params["branch"], url_params["ref"]))
+        elif self.jobs_id_list:
+            print(self.projects_id_list)
+            for i, project in enumerate(self.projects_id_list):
+                info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
+                cmd1 = r'curl --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}"'.format(**info)
+                result = self.doshell(cmd1, "%s get commit_id" % self.projects[i])
+                if result:
+                    commit_sha = result["commit"]["short_id"]
+                    url_params = {"ref": commit_sha, "branch": self.createBranchName}
+                    info["params"] =  parse.urlencode(url_params)
+                    cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/branches?{params}"'.format(**info)
+                    self.doshell(cmd2, "[%s] create branch[%s] by [%s] " %(self.projects[i], url_params["branch"], url_params["ref"]))
+                else:
+                    logger.error("%s create tag is interrupted,because pre_cmd is faild" % self.projects[i])
 
 if __name__ == "__main__":
     gitlab = GitLabTools()
@@ -322,3 +345,5 @@ if __name__ == "__main__":
         gitlab.update_merge()
     if gitlab.pipline_data:
         gitlab.create_pipline()
+    if gitlab.createBranchName:
+        gitlab.create_branch()

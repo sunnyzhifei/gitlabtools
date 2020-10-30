@@ -15,7 +15,7 @@ const layout = {
     span: 8,
   },
   wrapperCol: {
-    span: 16,
+    span: 24,
   },
 };
 
@@ -119,13 +119,13 @@ class BranchContent extends Component {
         </Form.Item>
         <Form.Item
           name={"artifact"}
-          label="download artifact"
+          label="artifact"
           valuePropName="checked"
         >
           <Checkbox></Checkbox>
         </Form.Item>
-        <Form.Item label="createTag">
-          <Input.Group compact>
+        <Form.Item label="createTag" >
+          <Input.Group compact >
             <Form.Item name={"tagName"}>
               <Input
                 placeholder="tag name"

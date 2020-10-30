@@ -15,7 +15,7 @@ const layout = {
     span: 8,
   },
   wrapperCol: {
-    span: 16,
+    span: 24,
   },
 };
 
@@ -218,7 +218,7 @@ class MutiBranchContent extends Component {
       </Form.List>
         <Form.Item
           name={"artifact"}
-          label="download artifact"
+          label="artifact"
           valuePropName="checked"
         >
           <Checkbox></Checkbox>
