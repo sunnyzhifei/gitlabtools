@@ -145,7 +145,7 @@ class MutiBranchContent extends Component {
             <div>
               {fields.map((field,index) => (
                 <>
-                  <Form.Item className="myant-form-item"  label={index === 0 ? 'project' : 'project'+index} key={"project"+index}>
+                  <Form.Item className="myant-form-item" required label={index === 0 ? 'project' : 'project'+index} key={"project"+index}>
                     <Input.Group compact>
                       <Form.Item 
                       {...field}
@@ -158,7 +158,7 @@ class MutiBranchContent extends Component {
                         showSearch
                         allowClear
                         value={project.value}
-                        placeholder="Select Project"
+                        placeholder="select project"
                         notFoundContent={project.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
                         onSearch={this.fetchProject}
@@ -181,7 +181,7 @@ class MutiBranchContent extends Component {
                         showSearch
                         allowClear
                         value={branch.value}
-                        placeholder="Select Branch"
+                        placeholder="select branch"
                         notFoundContent={branch.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
                         onSearch={this.fetchBranch}
@@ -255,12 +255,21 @@ class MutiBranchContent extends Component {
             </Form.Item>
           </Input.Group>
         </Form.Item>
+        <Form.Item 
+          name={"createBranchName"} 
+          label="createBranch" 
+        >
+          <Input 
+          style={{ width: "300px" }} 
+          placeholder="input branch name"
+          />
+        </Form.Item>
         <Form.Item
           name={"pipline"}
           label="pipline"
           valuePropName="value"
         >
-          <Select  style={{ width: 120 }}>
+          <Select  style={{ width: 140 }} allowClear="true" placeholder="target branch">
             <Option value="dev">dev</Option>
             <Option value="test">test</Option>
             <Option value="master">master</Option>

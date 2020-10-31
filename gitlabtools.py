@@ -45,6 +45,7 @@ class GitLabTools():
         self.pipline_data={}
         self.createBranch = False
         self.createBranchName = ""
+        self.scriptPath, filename = os.path.split(os.path.abspath(__file__))
         try:
             opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:-l:", ["help", "project=", "branch=", "job=", "line=","download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge"])
         except getopt.GetoptError:
@@ -208,6 +209,7 @@ class GitLabTools():
                 cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
                 subprocess.call(cmd, shell=True)
                 logger.critical("[%s] artifact download finished" %self.projects[i].replace("%2F","/"))
+            os.chdir(self.scriptPath)
         elif self.projects_id_list and self.jobs_id_list and len(self.projects_id_list) == len(self.jobs_id_list):
             # download artifact by jobs_id
             for i, project in enumerate(self.projects_id_list):
@@ -217,8 +219,11 @@ class GitLabTools():
                 cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
                 subprocess.call(cmd, shell=True)
                 logger.critical("[%s] artifact download finished" %self.projects[i].replace("%2F","/"))
+            os.chdir(self.scriptPath)
         else:
+            os.chdir(self.scriptPath)
             raise Exception("download exception")
+        
 
     def doshell(self, cmd, info=None):
         print(cmd)
@@ -316,7 +321,6 @@ class GitLabTools():
                 cmd = r'curl --request POST --header "PRIVATE-TOKEN: {}" "{}"'.format(self.token, url)
                 self.doshell(cmd, "[%s] create branch[%s] by [%s] " %(self.projects[i], url_params["branch"], url_params["ref"]))
         elif self.jobs_id_list:
-            print(self.projects_id_list)
             for i, project in enumerate(self.projects_id_list):
                 info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
                 cmd1 = r'curl --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}"'.format(**info)

@@ -10,6 +10,7 @@ import tsIcon from './gitlab-logo.png';
 import  BranchContent from './component/UniqueBranchContent'
 import  MutiBranchContent from './component/MutiBranchContent'
 import LogContent from './component/LogContent'
+import JobContent from './component/JobContent';
 // import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -32,7 +33,7 @@ class App extends Component{
     } else if (e.key === "2") {
       this.setState({menu: <MutiBranchContent />})
     } else if (e.key === "3") {
-      this.setState({menu: <BranchContent />})
+      this.setState({menu: <JobContent />})
     }
   }
   render (){

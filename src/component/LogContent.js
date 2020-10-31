@@ -1,47 +1,51 @@
 import React, { Component } from "react";
 import ".././App.css";
-import { PageHeader, Divider } from "antd";
+import { Divider } from "antd";
 
 class LogContent extends Component{
     constructor(props) {
         super(props);
         this.state={
             isScroll: true,
-            setinterval:  setInterval(this.scrollme(),1000)
+            intervalId:''
         }
       }
       
     // output.scrollTop = output.scrollHeight;\
     componentDidMount() {
-    let script = document.querySelector('#script');
-    if (script) {
-        return;
-    }
-    script = document.createElement('script');
-    script.id = 'script';
-    script.textContent='\
-        var output = document.getElementById("output");\
-        var xhr = new XMLHttpRequest();\
-        xhr.open("GET", "http://localhost:54321/stream");\
-        xhr.send();\
-        setInterval(function() {\
-            output.textContent = xhr.responseText ? xhr.responseText : "no content";\
-        }, 1000);\
-        '
-    
-    document.querySelector('#logs').appendChild(script);
+        let script = document.querySelector('#script');
+        if (script) {
+            return;
+        }
+        script = document.createElement('script');
+        script.id = 'script';
+        script.textContent='\
+            var output = document.getElementById("output");\
+            var xhr = new XMLHttpRequest();\
+            xhr.open("GET", "http://localhost:54321/stream");\
+            xhr.send();\
+            setInterval(function() {\
+                output.textContent = xhr.responseText ? xhr.responseText : "no content";\
+            }, 1000);\
+            '
+        document.querySelector('#logs').appendChild(script);
+        this.setState({
+            intervalId: setInterval(this.scrollme, 1000)
+        })
     }
     scrollme = ()=>{ 
         var output = document.getElementById("output");
         output.scrollTop = output.scrollHeight;
     }
     handleClick = ()=>{
-        if(isScroll){
-            clearInterval(setscroll);
-            isTrue=false;
+        if(this.state.isScroll){
+            clearInterval(this.state.intervalId);
+            this.setState({isScroll:false})
         }else{
-            scroll=setInterval("scrollme()",1000);
-            isTrue=true;
+            this.setState({
+                isScroll: true,
+                intervalId: setInterval(this.scrollme, 1000)
+            })
         }
     }
     

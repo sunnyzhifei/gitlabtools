@@ -94,7 +94,10 @@ class BranchContent extends Component {
           label="branch" 
           rules={[{ required: true, message: 'missing branch' }]}
         >
-          <Input style={{ width: "300px" }} />
+          <Input 
+          style={{ width: "300px" }} 
+          placeholder="input branch"
+          />
         </Form.Item>
         <Form.Item 
           name={"project"} 
@@ -105,7 +108,7 @@ class BranchContent extends Component {
             mode="multiple"
             labelInValue
             value={value}
-            placeholder="Select projects"
+            placeholder="select projects"
             notFoundContent={fetching ? <Spin size="small" /> : null}
             filterOption={false}
             onSearch={this.fetchProject}
@@ -156,12 +159,21 @@ class BranchContent extends Component {
             </Form.Item>
           </Input.Group>
         </Form.Item>
+        <Form.Item 
+          name={"createBranchName"} 
+          label="createBranch" 
+        >
+          <Input 
+          style={{ width: "300px" }} 
+          placeholder="input branch name"
+          />
+        </Form.Item>
         <Form.Item
           name={"pipline"}
           label="pipline"
           valuePropName="value"
         >
-          <Select style={{ width: 120 }} allowClear="true">
+          <Select style={{ width: 140 }} allowClear="true" placeholder="target branch">
             <Option value="dev">dev</Option>
             <Option value="test">test</Option>
             <Option value="master">master</Option>
