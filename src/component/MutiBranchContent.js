@@ -5,6 +5,7 @@ import { Select, Spin } from "antd";
 import debounce from "lodash/debounce";
 import axios from "axios";
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
+import { apiServer } from "../Api.js"
 
 const { Option } = Select;
 
@@ -46,7 +47,7 @@ class MutiBranchContent extends Component {
     form.type = "mutibranch"
     console.log("form: ",form)
     axios
-      .post("http://localhost:54321/gitlab", 
+      .post(`${apiServer}/gitlab`, 
         form
       )
       .then((res)=>{

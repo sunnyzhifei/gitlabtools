@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import ".././App.css";
 import { Divider } from "antd";
+import { apiServer } from "../Api.js"
 
 class LogContent extends Component{
     constructor(props) {
@@ -19,15 +20,15 @@ class LogContent extends Component{
         }
         script = document.createElement('script');
         script.id = 'script';
-        script.textContent='\
+        script.textContent=`\
             var output = document.getElementById("output");\
             var xhr = new XMLHttpRequest();\
-            xhr.open("GET", "http://localhost:54321/stream");\
+            xhr.open("GET", "${apiServer}/stream");\
             xhr.send();\
             setInterval(function() {\
                 output.textContent = xhr.responseText ? xhr.responseText : "no content";\
             }, 1000);\
-            '
+            `
         document.querySelector('#logs').appendChild(script);
         this.setState({
             intervalId: setInterval(this.scrollme, 1000)

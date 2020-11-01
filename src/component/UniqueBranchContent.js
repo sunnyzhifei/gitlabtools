@@ -5,6 +5,7 @@ import { Form, Input, Checkbox, Button, message } from "antd";
 import { Select, Spin } from "antd";
 import debounce from "lodash/debounce";
 import axios from "axios";
+import { apiServer } from "../Api.js"
 
 const { Option } = Select;
 
@@ -39,7 +40,7 @@ class BranchContent extends Component {
     form.type = "uniquebranch"
     console.log("form: ",form)
     axios
-      .post("http://localhost:54321/gitlab", 
+      .post(`${apiServer}/gitlab`, 
         form
       )
       .then((res)=>{
