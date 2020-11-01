@@ -5,14 +5,14 @@ from time import sleep
 import json
 from flask_cors import CORS
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='build', static_folder='build/static')
 CORS(app)
 
 dirname, filename = os.path.split(os.path.abspath(__file__))
 
-# @app.route('/')
-# def hello_world():
-#    return render_template('index.html')
+@app.route('/')
+def index():
+   return render_template('index.html')
 
 @app.route('/gitlab',methods = ['POST', 'GET'])
 def gitlab():
