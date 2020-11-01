@@ -16,8 +16,8 @@ formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(l
 
 # 使用FileHandler输出到文件
 # fh = logging.FileHandler("gitlabtools.log", mode='w')
-#fh.setLevel(logging.CRITICAL)
-#fh.setFormatter(formatter)
+# fh.setLevel(logging.CRITICAL)
+# fh.setFormatter(formatter)
 
 # 使用StreamHandler输出到屏幕
 ch = logging.StreamHandler()
