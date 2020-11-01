@@ -15,16 +15,16 @@ logger.setLevel(logging.DEBUG)
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 
 # 使用FileHandler输出到文件
-fh = logging.FileHandler("gitlabtools.log", mode='w')
-fh.setLevel(logging.CRITICAL)
-fh.setFormatter(formatter)
+# fh = logging.FileHandler("gitlabtools.log", mode='w')
+#fh.setLevel(logging.CRITICAL)
+#fh.setFormatter(formatter)
 
 # 使用StreamHandler输出到屏幕
 ch = logging.StreamHandler()
 ch.setLevel(logging.CRITICAL)
 ch.setFormatter(formatter)
 
-logger.addHandler(fh)
+# logger.addHandler(fh)
 logger.addHandler(ch)
 
 class GitLabTools():
