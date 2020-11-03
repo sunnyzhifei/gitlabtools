@@ -22,12 +22,10 @@ class LogContent extends Component{
         script.id = 'script';
         script.textContent=`\
             var output = document.getElementById("output");\
-            var xhr = new XMLHttpRequest();\
-            xhr.open("GET", "${apiServer}/stream");\
-            xhr.send();\
-            setInterval(function() {\
-                output.textContent = xhr.responseText ? xhr.responseText : "no content";\
-            }, 1000);\
+            var source = new EventSource('${apiServer}/stream');\
+            source.onmessage = function(event) {\
+                output.innerHTML += event.data + "<br>";\
+            }
             `
         document.querySelector('#logs').appendChild(script);
         this.setState({

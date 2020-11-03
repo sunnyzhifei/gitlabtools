@@ -1,9 +1,10 @@
-from flask import Flask, redirect, url_for, request, render_template,make_response, jsonify
+from flask import Flask, redirect, url_for, request, render_template,make_response, jsonify, Response
 from gitlabtools import GitLabTools,logger
 import os
 from time import sleep
 import json
 from flask_cors import CORS
+# from wsgiref.simple_server import make_server
 
 app = Flask(__name__, template_folder='build', static_folder='build/static')
 CORS(app)
@@ -155,10 +156,18 @@ def stream():
     def generate():
         with open('%s/job.log' %dirname, encoding="utf-8") as f:
             while True:
-                yield f.read()
-                sleep(1)
-    return app.response_class(generate(), mimetype='text/plain')
+                for line in f.readlines():
+                    yield "data: %s\n\n" %line
+                    # sleep(1)
+            # return "data: %s\n\n" %f.read()
+        # for i in range(10): 
+        #     yield 'data: i = %d\n\n' % i 
+        #     sleep(1) 
+    return Response(generate(), mimetype='text/event-stream')
 
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=54320)
+    # server = make_server(host='0.0.0.0', port=54320, app=app)
+    # server.serve_forever()
+    # app.run()
