@@ -8,7 +8,7 @@ class LogContent extends Component{
         super(props);
         this.state={
             isScroll: true,
-            intervalId:''
+            intervalId:'',
         }
       }
       
@@ -24,9 +24,8 @@ class LogContent extends Component{
             var output = document.getElementById("output");\
             var source = new EventSource('${apiServer}/stream');\
             source.onmessage = function(event) {\
-                output.innerHTML += event.data + "<br>";\
-            }
-            `
+                output.innerHTML += "<div>" + event.data + "</div>";\
+            }`
         document.querySelector('#logs').appendChild(script);
         this.setState({
             intervalId: setInterval(this.scrollme, 1000)
