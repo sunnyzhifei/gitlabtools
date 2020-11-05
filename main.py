@@ -156,8 +156,8 @@ def stream():
     def generate():
         with open('%s/job.log' %dirname, encoding="utf-8") as f:
             while True:
-                for line in f.readlines():
-                    yield "data: %s\n\n" %line
+                # for line in f.readlines():
+                    yield "event: log\ndata: %s\n\n" %f.readline()
                     # sleep(1)
             # return "data: %s\n\n" %f.read()
         # for i in range(10): 
