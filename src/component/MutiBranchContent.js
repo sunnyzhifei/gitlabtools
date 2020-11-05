@@ -259,6 +259,7 @@ class MutiBranchContent extends Component {
         <Form.Item 
           name={"createBranchName"} 
           label="createBranch" 
+          style={{ height: "56px" }} 
         >
           <Input 
           style={{ width: "300px" }} 
@@ -269,6 +270,7 @@ class MutiBranchContent extends Component {
           name={"pipline"}
           label="pipline"
           valuePropName="value"
+          style={{ height: "56px" }} 
         >
           <Select  style={{ width: 140 }} allowClear="true" placeholder="target branch">
             <Option value="dev">dev</Option>

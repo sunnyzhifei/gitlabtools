@@ -222,14 +222,18 @@ class JobContent extends Component {
         </Form.Item>
         <Form.Item 
           name={"createBranchName"} 
-          label="createBranch" 
+          label="createBranch"
+          style={{ height: "56px" }}  
         >
           <Input 
           style={{ width: "300px" }} 
           placeholder="input branch name"
           />
         </Form.Item>
-        <Form.Item label='pipline'>
+        <Form.Item 
+        label='pipline'
+        style={{ height: "56px" }} 
+        >
           <Input.Group compact>
             <Form.Item name={"piplineSourceBranch"}>
               <Input
