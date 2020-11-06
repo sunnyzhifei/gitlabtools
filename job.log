@@ -338,3 +338,50 @@ curl: (23) Failed writing body (0 != 3482)
 curl: Saved to filename 'artifact-base-server-26695.zip'
 2020-11-01 21:35:20,071 - gitlabtools.py[line:211] - CRITICAL: [nbiz/base] artifact download finished
 127.0.0.1 - - [01/Nov/2020 21:35:20] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+<<<<<<< HEAD
+=======
+127.0.0.1 - - [01/Nov/2020 21:35:20] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+
+127.0.0.1 - - [01/Nov/2020 21:35:20] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+
+127.0.0.1 - - [01/Nov/2020 21:35:20] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+
+python3: can't open file 'app.py': [Errno 2] No such file or directory
+ * Serving Flask app "main" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://0.0.0.0:54320/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 263-497-870
+127.0.0.1 - - [03/Nov/2020 17:35:39] "[37mGET / HTTP/1.1[0m" 200 -
+127.0.0.1 - - [03/Nov/2020 17:35:41] "[37mGET /stream HTTP/1.1[0m" 200 -
+127.0.0.1 - - [03/Nov/2020 17:35:47] "[33mGET /manifest.json HTTP/1.1[0m" 404 -
+2020-11-03 17:36:01,603 - gitlabtools.py[line:206] - CRITICAL: [nbiz/wac-manager] artifact download starting
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0 67 11.9M   67 8210k    0     0   9.8M      0  0:00:01 --:--:--  0:00:01  9.8M100 11.9M  100 11.9M    0     0  10.6M      0  0:00:01  0:00:01 --:--:-- 10.6M
+curl: Saved to filename 'artifact-wac-manager-26816.zip'
+2020-11-03 17:36:03,018 - gitlabtools.py[line:211] - CRITICAL: [nbiz/wac-manager] artifact download finished
+127.0.0.1 - - [03/Nov/2020 17:36:03] "[37mPOST /gitlab HTTP/1.1[0m" 200 -
+ * Serving Flask app "main" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://0.0.0.0:54320/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 221-382-996
+ * Serving Flask app "main" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: on
+ * Running on http://0.0.0.0:54320/ (Press CTRL+C to quit)
+ * Restarting with stat
+ * Debugger is active!
+ * Debugger PIN: 221-382-996
+>>>>>>> 89d6e37... linux format
