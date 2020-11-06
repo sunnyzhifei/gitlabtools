@@ -226,10 +226,8 @@ class GitLabTools():
         
 
     def doshell(self, cmd, info=None):
-        print(cmd)
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = p.communicate()
-        print(output)
         if output:
             output = json.loads(output.decode("utf-8"))
             if output.get("message"):
