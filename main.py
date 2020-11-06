@@ -18,7 +18,7 @@ def index():
 def gitlab():
    if request.method == 'POST':
         result = json.loads(request.data.decode("utf-8"))
-        print(result)
+        # print(result)
         try:
             type = result.get("type")
             if type == "uniquebranch":
