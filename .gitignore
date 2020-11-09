@@ -6,6 +6,8 @@
 .pnp.js
 /__pycache__
 /20*
+*pid
+*.log
 
 # testing
 /coverage
