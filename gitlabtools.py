@@ -11,20 +11,19 @@ from urllib import parse
 import logging
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 
 # 使用FileHandler输出到文件
-# fh = logging.FileHandler("gitlabtools.log", mode='w')
-# fh.setLevel(logging.CRITICAL)
-# fh.setFormatter(formatter)
+fh = logging.FileHandler("gitlabtools.log", mode='a')
+fh.setLevel(logging.ERROR)
+fh.setFormatter(formatter)
 
 # 使用StreamHandler输出到屏幕
 ch = logging.StreamHandler()
 ch.setLevel(logging.ERROR)
 ch.setFormatter(formatter)
 
-# logger.addHandler(fh)
+logger.addHandler(fh)
 logger.addHandler(ch)
 
 class GitLabTools():

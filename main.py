@@ -6,7 +6,7 @@ import json
 from flask_cors import CORS
 # from wsgiref.simple_server import make_server
 
-app = Flask(__name__, template_folder='build', static_folder='build/static')
+app = Flask(__name__, template_folder='build', static_folder='build', static_url_path='')
 CORS(app)
 
 dirname, filename = os.path.split(os.path.abspath(__file__))
@@ -155,7 +155,7 @@ def gitlab():
 @app.route('/api/stream')
 def stream():
     def generate():
-        with open('%s/job.log' %dirname, mode='rb') as f:
+        with open('%s/gitlabtools.log' %dirname, mode='rb') as f:
             try:
                 f.seek(-10000, 2)
             finally:
