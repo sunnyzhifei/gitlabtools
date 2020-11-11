@@ -10,29 +10,15 @@ class LogContent extends Component{
             isScroll: true,
             intervalId:'',
             log: [],
-            logtemp: ''
         }
       }
-      
-    // output.scrollTop = output.scrollHeight;\
+
     componentDidMount() {
-        // let script = document.querySelector('#script');
-        // if (script) {
-        //     return;
-        // }
-        // script = document.createElement('script');
-        // script.id = 'script';
-        // script.textContent=`\
-        //     var output = document.getElementById("output");\
-        //     var source = new EventSource('${apiServer}/stream');\
-        //     source.onmessage = function(event) {\
-        //         output.innerHTML += "<div>" + event.data + "</div>";\
-        //     }`
-        // document.querySelector('#logs').appendChild(script);
         const source = new EventSource(`${apiServer}/stream`)
         source.addEventListener('log',(event)=>{
             const { data } = event
-            // console.log(data.slice(-2))
+            // const dataString = data.replace(/^(\s|b')+|(\s|\\n')+$/g,'').replace(/^(\s|b")+|(\s|\\n")+$/g,'');
+            // console.log("dataString: ",dataString)
             this.setState({
                 log: [...this.state.log, data]
             }) 
@@ -41,6 +27,7 @@ class LogContent extends Component{
             intervalId: setInterval(this.scrollme, 1000)
         })
     }
+    
     scrollme = ()=>{ 
         var output = document.getElementById("output");
         output.scrollTop = output.scrollHeight;
@@ -55,6 +42,23 @@ class LogContent extends Component{
                 intervalId: setInterval(this.scrollme, 1000)
             })
         }
+    }
+
+    byteToString(arr) {
+        //声明一个Uint8Array，经常被用来存放字节
+        let bytes=new Uint8Array(arr);
+        let str="";
+        for(let i=0;i<bytes.length;i++){
+          //用16进制表示字节
+          let k=bytes[i].toString(16);
+          //如果只有1位在前面补0
+          if(k.length==1)k="0"+k;
+          //储存为URI格式
+          str += "%"+k
+        }
+        //output就是bytes转换后的string啦！
+        let output=decodeURI(str);
+        return output
     }
     
     render (){

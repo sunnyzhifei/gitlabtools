@@ -38,7 +38,7 @@ class BranchContent extends Component {
     this.setState({loading: true})
     const form = values
     form.type = "uniquebranch"
-    console.log("form: ",form)
+    // console.log("form: ",form)
     axios
       .post(`${apiServer}/gitlab`, 
         form
@@ -69,7 +69,7 @@ class BranchContent extends Component {
           return data1;
         });
         const data2 = data.length ? data : ["none"];
-        console.log(data2);
+        // console.log(data2);
         this.setState({ data: data2, fetching: false });
       })
       .catch((err) => {
@@ -163,6 +163,7 @@ class BranchContent extends Component {
         <Form.Item 
           name={"createBranchName"} 
           label="createBranch" 
+          style={{ height: "56px" }}
         >
           <Input 
           style={{ width: "300px" }} 
@@ -173,6 +174,7 @@ class BranchContent extends Component {
           name={"pipline"}
           label="pipline"
           valuePropName="value"
+          style={{ height: "56px" }}
         >
           <Select style={{ width: 140 }} allowClear="true" placeholder="target branch">
             <Option value="dev">dev</Option>

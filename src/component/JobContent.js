@@ -44,7 +44,7 @@ class JobContent extends Component {
     this.setState({loading: true})
     const form = values
     form.type = "job"
-    console.log("form: ",form)
+    // console.log("form: ",form)
     axios
       .post(`${apiServer}/gitlab`, 
         form
@@ -223,13 +223,17 @@ class JobContent extends Component {
         <Form.Item 
           name={"createBranchName"} 
           label="createBranch" 
+          style={{ height: "56px" }}
         >
           <Input 
           style={{ width: "300px" }} 
           placeholder="input branch name"
           />
         </Form.Item>
-        <Form.Item label='pipline'>
+        <Form.Item 
+        label='pipline'
+        style={{ height: "56px" }}
+        >
           <Input.Group compact>
             <Form.Item name={"piplineSourceBranch"}>
               <Input

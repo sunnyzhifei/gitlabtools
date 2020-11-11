@@ -45,7 +45,7 @@ class MutiBranchContent extends Component {
     this.setState({loading: true})
     const form = values
     form.type = "mutibranch"
-    console.log("form: ",form)
+    // console.log("form: ",form)
     axios
       .post(`${apiServer}/gitlab`, 
         form
@@ -84,7 +84,7 @@ class MutiBranchContent extends Component {
   };
 
   fetchBranch = (value) => {
-    console.log(this.state.project.value)
+    // console.log(this.state.project.value)
     if(this.state.project.value.length){
       if (this.state.project.value!=="none"){
         const projectname = this.state.project.value.replace("/","%2F")
@@ -259,6 +259,7 @@ class MutiBranchContent extends Component {
         <Form.Item 
           name={"createBranchName"} 
           label="createBranch" 
+          style={{ height: "56px" }}
         >
           <Input 
           style={{ width: "300px" }} 
@@ -269,6 +270,7 @@ class MutiBranchContent extends Component {
           name={"pipline"}
           label="pipline"
           valuePropName="value"
+          style={{ height: "56px" }}
         >
           <Select  style={{ width: 140 }} allowClear="true" placeholder="target branch">
             <Option value="dev">dev</Option>
