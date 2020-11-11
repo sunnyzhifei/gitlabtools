@@ -19,7 +19,6 @@ def index():
 def gitlab():
    if request.method == 'POST':
         result = json.loads(request.data.decode("utf-8"))
-        print(result)
         try:
             type = result.get("type")
             if type == "uniquebranch":
@@ -146,6 +145,8 @@ def gitlab():
                         gitlab.create_branch()
                     if piplineSourceBranch and piplineTargetBranch:
                         gitlab.create_pipline()
+        except Exception  as e:
+            logger.exception(e)
         finally:
             result_text = {"message": "操作成功"}
             response = make_response(jsonify(result_text))
@@ -154,15 +155,14 @@ def gitlab():
 @app.route('/stream')
 def stream():
     def generate():
-        with open('%s/job.log' %dirname, encoding="utf-8") as f:
-            while True:
-                # for line in f.readlines():
-                    yield "event: log\ndata: %s\n\n" %f.readline()
-                    # sleep(1)
-            # return "data: %s\n\n" %f.read()
-        # for i in range(10): 
-        #     yield 'data: i = %d\n\n' % i 
-        #     sleep(1) 
+        with open('%s/job.log' %dirname, mode='rb') as f:
+            try:
+                f.seek(-10000, 2)
+            finally:
+                while True:
+                    for line in f.readlines():
+                        yield "event: log\ndata: %s\n\n" %line.decode("utf-8")
+                    sleep(1)
     return Response(generate(), mimetype='text/event-stream')
 
 

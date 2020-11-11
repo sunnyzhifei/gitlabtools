@@ -11,7 +11,7 @@ from urllib import parse
 import logging
 
 logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
+logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(levelname)s: %(message)s")
 
 # 使用FileHandler输出到文件
@@ -21,7 +21,7 @@ formatter = logging.Formatter("%(asctime)s - %(filename)s[line:%(lineno)d] - %(l
 
 # 使用StreamHandler输出到屏幕
 ch = logging.StreamHandler()
-ch.setLevel(logging.CRITICAL)
+ch.setLevel(logging.ERROR)
 ch.setFormatter(formatter)
 
 # logger.addHandler(fh)
@@ -207,8 +207,7 @@ class GitLabTools():
                 info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "branch": self.branch, "job_re": job_re}
                 url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/artifacts/{branch}/download?job={job_re}".format(**info)
                 cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
-                subprocess.call(cmd, shell=True)
-                logger.critical("[%s] artifact download finished" %self.projects[i].replace("%2F","/"))
+                self.doshell(cmd,"[%s] artifact download " %self.projects[i].replace("%2F","/"))
             os.chdir(self.scriptPath)
         elif self.projects_id_list and self.jobs_id_list and len(self.projects_id_list) == len(self.jobs_id_list):
             # download artifact by jobs_id
@@ -217,8 +216,7 @@ class GitLabTools():
                 info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "job_id": self.jobs_id_list[i]}
                 url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}/artifacts".format(**info)
                 cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
-                subprocess.call(cmd, shell=True)
-                logger.critical("[%s] artifact download finished" %self.projects[i].replace("%2F","/"))
+                self.doshell(cmd,"[%s] artifact download " %self.projects[i].replace("%2F","/"))
             os.chdir(self.scriptPath)
         else:
             os.chdir(self.scriptPath)
@@ -226,30 +224,39 @@ class GitLabTools():
         
 
     def doshell(self, cmd, info=None):
-        print(cmd)
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         output, err = p.communicate()
-        print(output)
-        if output:
-            output = json.loads(output.decode("utf-8"))
-            if output.get("message"):
-                if isinstance(output["message"], str):
-                    r_message = "".join(output["message"])
+        output_str = output.decode("utf-8")
+        err_str = err.decode("utf-8")
+        # logger.critical("output: "+ output_str)
+        # logger.critical("err: "+ err_str)
+        if output_str:
+            try:
+                output = json.loads(output_str)
+                if output.get("message"):
+                    if isinstance(output["message"], str):
+                        r_message = "".join(output["message"])
+                    else:
+                        r_message = output["message"]
+                    logger.critical("{}, message: {}".format(info, r_message))
+                elif output.get("state"):
+                    state = str(output["state"])
+                    iid = str(output["iid"])
+                    logger.critical("{}, state: {}, iid: {}".format(info, state, iid))
+                elif output.get("status"):
+                    status = output.get("status")
+                    logger.critical("{}, status: {}".format(info, status))
                 else:
-                    r_message = output["message"]
-                logger.critical("{}, message: {}".format(info, r_message))
-            elif output.get("state"):
-                state = str(output["state"])
-                iid = str(output["iid"])
-                logger.critical("{}, state: {}, iid: {}".format(info, state, iid))
-            elif output.get("status"):
-                status = output.get("status")
-                logger.critical("{}, status: {}".format(info, status))
+                    logger.critical(output)
+                return output
+            except json.JSONDecodeError :
+                logger.critical(info + " success! \n%s" %output_str)
+        elif not output_str and err_str:
+            err = re.search(r"Warning:(.*)\n",err_str,re.M|re.I)
+            if err:
+                logger.critical(info + " warning! \n%s" %err.group(1))
             else:
-                logger.critical(output)
-            return output
-        elif not output and err:
-            logger.critical(info + " error: %s" %err.decode("utf-8"))
+                logger.critical(info + " error,please analyse log: \n%s" %err_str)
         else:
             logger.critical(info + " success")
 
