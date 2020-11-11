@@ -47,7 +47,7 @@ class MutiBranchContent extends Component {
     form.type = "mutibranch"
     // console.log("form: ",form)
     axios
-      .post(`${apiServer}/gitlab`, 
+      .post(`${apiServer}/api/gitlab`, 
         form
       )
       .then((res)=>{

@@ -40,7 +40,7 @@ class BranchContent extends Component {
     form.type = "uniquebranch"
     // console.log("form: ",form)
     axios
-      .post(`${apiServer}/gitlab`, 
+      .post(`${apiServer}/api/gitlab`, 
         form
       )
       .then((res)=>{

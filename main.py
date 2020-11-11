@@ -15,7 +15,7 @@ dirname, filename = os.path.split(os.path.abspath(__file__))
 def index():
    return render_template('index.html')
 
-@app.route('/gitlab',methods = ['POST', 'GET'])
+@app.route('/api/gitlab',methods = ['POST', 'GET'])
 def gitlab():
    if request.method == 'POST':
         result = json.loads(request.data.decode("utf-8"))
@@ -152,7 +152,7 @@ def gitlab():
             response = make_response(jsonify(result_text))
             return response
 
-@app.route('/stream')
+@app.route('/api/stream')
 def stream():
     def generate():
         with open('%s/job.log' %dirname, mode='rb') as f:

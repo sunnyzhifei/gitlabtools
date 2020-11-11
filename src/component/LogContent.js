@@ -14,7 +14,7 @@ class LogContent extends Component{
       }
 
     componentDidMount() {
-        const source = new EventSource(`${apiServer}/stream`)
+        const source = new EventSource(`${apiServer}/api/stream`)
         source.addEventListener('log',(event)=>{
             const { data } = event
             // const dataString = data.replace(/^(\s|b')+|(\s|\\n')+$/g,'').replace(/^(\s|b")+|(\s|\\n")+$/g,'');
