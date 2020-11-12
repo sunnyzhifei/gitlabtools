@@ -249,13 +249,13 @@ class GitLabTools():
                     logger.critical(output)
                 return output
             except json.JSONDecodeError :
-                logger.critical(info + " success! \n%s" %output_str)
+                logger.critical(info + " success! %s" %output_str)
         elif not output_str and err_str:
             err = re.search(r"Warning:(.*)\n",err_str,re.M|re.I)
             if err:
-                logger.critical(info + " warning! \n%s" %err.group(1))
+                logger.critical(info + " warning! %s" %err.group(1))
             else:
-                logger.critical(info + " error,please analyse log: \n%s" %err_str)
+                logger.error(info + " error,please analyse log: \n%s" %err_str)
         else:
             logger.critical(info + " success")
 
