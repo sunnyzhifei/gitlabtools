@@ -155,7 +155,7 @@ def gitlab():
 @app.route('/api/stream')
 def stream():
     def generate():
-        with open('%s/job.log' %dirname, mode='rb') as f:
+        with open('%s/gitlabtools.log' %dirname, mode='rb') as f:
             try:
                 f.seek(-10000, 2)
             finally:
