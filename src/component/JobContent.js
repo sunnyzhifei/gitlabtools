@@ -196,6 +196,16 @@ class JobContent extends Component {
             </Form.Item>
           </Input.Group>
         </Form.Item>
+        <Form.Item 
+          name={"createBranchName"} 
+          label="createBranch" 
+          style={{ height: "56px" }}
+        >
+          <Input 
+          style={{ width: "300px" }} 
+          placeholder="input branch name"
+          />
+        </Form.Item>
         <Form.Item label="mergeCode">
           <Input.Group compact>
             <Form.Item 
@@ -221,16 +231,6 @@ class JobContent extends Component {
           </Input.Group>
         </Form.Item>
         <Form.Item 
-          name={"createBranchName"} 
-          label="createBranch" 
-          style={{ height: "56px" }}
-        >
-          <Input 
-          style={{ width: "300px" }} 
-          placeholder="input branch name"
-          />
-        </Form.Item>
-        <Form.Item 
         label='pipline'
         style={{ height: "56px" }}
         >
@@ -245,7 +245,7 @@ class JobContent extends Component {
               name={"piplineTargetBranch"}
               valuePropName="value"
             >
-              <Select  style={{ width: 140 }} allowClear="true" placeholder="target branch">
+              <Select  style={{ width: 140 }} allowClear="true" placeholder="target env">
                 <Option value="dev">dev</Option>
                 <Option value="test">test</Option>
                 <Option value="master">master</Option>

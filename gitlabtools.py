@@ -246,7 +246,7 @@ class GitLabTools():
                     status = output.get("status")
                     logger.critical("{}, status: {}".format(info, status))
                 else:
-                    logger.critical(output)
+                    logger.critical("{} success, output: {}".format(info, output))
                 return output
             except json.JSONDecodeError :
                 logger.critical(info + " success! %s" %output_str)
@@ -325,20 +325,20 @@ class GitLabTools():
                 info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "params": parse.urlencode(url_params)}
                 url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/repository/branches?{params}".format(**info)
                 cmd = r'curl --request POST --header "PRIVATE-TOKEN: {}" "{}"'.format(self.token, url)
-                self.doshell(cmd, "[%s] create branch[%s] by [%s] " %(self.projects[i], url_params["branch"], url_params["ref"]))
+                self.doshell(cmd, "[%s] create branch[%s] by [%s] " %(self.projects[i].replace("%2F","/"), url_params["branch"], url_params["ref"]))
         elif self.jobs_id_list:
             for i, project in enumerate(self.projects_id_list):
                 info = {"gitlab_domain": self.gitlab_domain, "token": self.token, "project_id": project, "job_id": self.jobs_id_list[i]}
                 cmd1 = r'curl --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}"'.format(**info)
-                result = self.doshell(cmd1, "%s get commit_id" % self.projects[i])
+                result = self.doshell(cmd1, "[%s] get commit_id" % self.projects[i].replace("%2F","/"))
                 if result:
                     commit_sha = result["commit"]["short_id"]
                     url_params = {"ref": commit_sha, "branch": self.createBranchName}
                     info["params"] =  parse.urlencode(url_params)
                     cmd2 = r'curl --request POST --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/repository/branches?{params}"'.format(**info)
-                    self.doshell(cmd2, "[%s] create branch[%s] by [%s] " %(self.projects[i], url_params["branch"], url_params["ref"]))
+                    self.doshell(cmd2, "[%s] create branch[%s] by [%s] " %(self.projects[i].replace("%2F","/"), url_params["branch"], url_params["ref"]))
                 else:
-                    logger.error("%s create tag is interrupted,because pre_cmd is faild" % self.projects[i])
+                    logger.error("[%s] create branch is interrupted,because pre_cmd is faild" % self.projects[i].replace("%2F","/"))
 
 if __name__ == "__main__":
     gitlab = GitLabTools()

@@ -54,12 +54,12 @@ def gitlab():
                     gitlab.download_by_shell()
                 if createTagName:
                     gitlab.create_tag()
+                if createBranchName:
+                    gitlab.create_branch()
                 if mergeTargetBranch:
                     gitlab.request_merge()
                 if piplineEnvironment:
                     gitlab.create_pipline()
-                if createBranchName:
-                    gitlab.create_branch()
 
             elif type == "mutibranch":
                 project_branch_list = result.get("project")
@@ -94,12 +94,12 @@ def gitlab():
                         gitlab.download_by_shell()
                     if createTagName:
                         gitlab.create_tag()
+                    if createBranchName:
+                        gitlab.create_branch()
                     if mergeTargetBranch:
                         gitlab.request_merge()
                     if piplineEnvironment:
                         gitlab.create_pipline()
-                    if createBranchName:
-                        gitlab.create_branch()
 
             elif type == "job":
                 project_job_list = result.get("project")
@@ -139,10 +139,10 @@ def gitlab():
                         gitlab.download_by_shell()
                     if createTagName:
                         gitlab.create_tag()
-                    if mergeSourceBranch and mergeTargetBranch and mergeMessage:
-                        gitlab.request_merge()
                     if createBranchName:
                         gitlab.create_branch()
+                    if mergeSourceBranch and mergeTargetBranch and mergeMessage:
+                        gitlab.request_merge()
                     if piplineSourceBranch and piplineTargetBranch:
                         gitlab.create_pipline()
         except Exception  as e:
@@ -155,7 +155,7 @@ def gitlab():
 @app.route('/api/stream')
 def stream():
     def generate():
-        with open('%s/gitlabtools.log' %dirname, mode='rb') as f:
+        with open('%s/job.log' %dirname, mode='rb') as f:
             try:
                 f.seek(-10000, 2)
             finally:

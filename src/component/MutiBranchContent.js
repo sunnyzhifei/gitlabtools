@@ -272,7 +272,7 @@ class MutiBranchContent extends Component {
           valuePropName="value"
           style={{ height: "56px" }}
         >
-          <Select  style={{ width: 140 }} allowClear="true" placeholder="target branch">
+          <Select  style={{ width: 140 }} allowClear="true" placeholder="target env">
             <Option value="dev">dev</Option>
             <Option value="test">test</Option>
             <Option value="master">master</Option>
