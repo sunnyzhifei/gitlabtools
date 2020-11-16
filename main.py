@@ -1,10 +1,9 @@
-from flask import Flask, redirect, url_for, request, render_template,make_response, jsonify, Response
+from flask import Flask, redirect, url_for, request, render_template, ake_response, jsonify, Response
 from gitlabtools import GitLabTools,logger
 import os
 from time import sleep
 import json
 from flask_cors import CORS
-# from wsgiref.simple_server import make_server
 
 app = Flask(__name__, template_folder='build', static_folder='build', static_url_path='')
 CORS(app)
@@ -161,13 +160,12 @@ def stream():
             finally:
                 while True:
                     for line in f.readlines():
-                        yield "event: log\ndata: %s\n\n" %line.decode("utf-8")
+                        yield "event: log\n"
+                        yield "data: %s\n" %line.decode("utf-8")
                     sleep(1)
+                    yield ": This is a comment to save heart with client\n\n"
     return Response(generate(), mimetype='text/event-stream')
 
 
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=54320)
-    # server = make_server(host='0.0.0.0', port=54320, app=app)
-    # server.serve_forever()
-    # app.run()
