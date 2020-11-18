@@ -20,7 +20,7 @@ fh.setFormatter(formatter)
 
 # 使用StreamHandler输出到屏幕
 ch = logging.StreamHandler()
-ch.setLevel(logging.ERROR)
+ch.setLevel(logging.DEBUG)
 ch.setFormatter(formatter)
 
 logger.addHandler(fh)
@@ -44,70 +44,10 @@ class GitLabTools():
         self.pipline_data={}
         self.createBranch = False
         self.createBranchName = ""
+        self.get_jobs_id_list=[]
         self.scriptPath, filename = os.path.split(os.path.abspath(__file__))
-        try:
-            opts, args = getopt.getopt(sys.argv[1:], "hp:b:j:dc:t::m:-r:-u:-l:", ["help", "project=", "branch=", "job=", "line=","download", "createtag=", "truncatetag=", "meassge=", "requestmerge=", "updatemerge"])
-        except getopt.GetoptError:
-            self.usage()
-            sys.exit()
-        for opt, value in opts:
-            if opt in ("-h", "--help"):
-                self.usage()
-                sys.exit()
-            elif opt in ("-p", "--project"):
-                self.projects = list(filter(None, value.split(",")))
-            elif opt in ("-b", "--branch"):
-                self.branch = value
-            elif opt in ("-j", "--job"):
-                self.jobs_id_list = list(filter(None, value.split(",")))
-            elif opt in ("-m", "--meassge"):
-                # self.meassge = re.sub(r"\s+","%20", value)
-                self.meassge = value
-            elif opt in ("-d", "--download"):
-                self.download = True
-            elif opt in ("-c", "--createtag"):
-                self.createtag = value
-            elif opt in ("-t", "--truncatetag"):
-                self.truncatetag = value
-            elif opt in ("-r", "--requestmerge"):
-                merge_request = parse.parse_qs(value)
-                if not merge_request.get("sb") or not merge_request.get("tb") or not merge_request.get("tt"):
-                    self.usage()
-                    raise Exception("merge requests miss args")
-                self.mergerequest["sbranch"] = merge_request["sb"][0]
-                self.mergerequest["tbranch"] = merge_request["tb"][0]
-                self.mergerequest["title"] = merge_request["tt"][0]
-            elif opt in ("-u", "--updatemerge"):
-                update_request = parse.parse_qs(value)
-                if not update_request.get("iid"):
-                    self.usage()
-                    raise Exception("update merge miss iid")
-                self.updaterequest["iid"] = update_request["iid"][0]
-                if update_request.get("state_event"):
-                    self.updaterequest["state_event"] = update_request["state_event"][0]
-                if update_request.get("title"):
-                    self.updaterequest["title"] = update_request["title"][0]
-                if update_request.get("target_branch"):
-                    self.updaterequest["tbranch"] = update_request["target_branch"][0]
-            elif opt in ("-l","--pipline"):
-                self.pipline_data = value
-        # if not sys.argv[1:]:
-        #     self.usage()
-        #     sys.exit()
-        if not self.download and not self.createtag and not self.truncatetag and not self.mergerequest and not self.updaterequest and not self.pipline_data:
-            self.usage()
-            raise Exception("operate nedd  -d or -c or -t or -r -u or -l")
-        # if not self.projects:
-        #     self.usage()
-        #     raise Exception("miss project name ")
-        if self.createtag and not self.branch and not self.jobs_id_list:
-            self.usage()
-            raise Exception("create tag need job_id or branch")
-        if self.branch and self.jobs_id_list:
-            self.usage()
-            raise Exception("job and branch cant concurrence")
-        # self.projects_id_list = self.get_project()
         self.projects_id_list = []
+
     def usage(self):
         print('''  Usage: python ./gitlabtools.py  [options]
         options:
@@ -156,6 +96,20 @@ class GitLabTools():
                 del dics[k]
         return dics
 
+    def get_latest_jobs(self, status="success"):
+        jobs_temp = []
+        for i, project  in enumerate(self.projects_id_list):
+            temp=[]
+            info = {"token": self.token, "gitlab_domain": self.gitlab_domain, "project_id": project, "status": status}
+            cmd = r'curl --request GET  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs?per_page=100&scope[]={status}" '.format(**info) 
+            result = self.doshell(cmd, "[%s] get %s job" %(self.projects[i].replace("%2F","/"), status))
+            for job in result:
+                if job.get('ref')==self.branch:
+                    temp.append(job.get('id'))
+            # set max jobid
+            jobs_temp.append(max(temp))
+        return jobs_temp
+
     def get_file_name(self, url, headers):
         filename = ''
         if 'Content-Disposition' in headers and headers['Content-Disposition']:
@@ -193,13 +147,13 @@ class GitLabTools():
         elif self.branch == "":
             job_re = ""
         else:
-            raise Exception("branch only support dev or test ")
+            self.get_jobs_id_list = self.get_latest_jobs()
         dir = self.time
         if not os.path.exists(dir):
             os.mkdir(dir)
         os.chdir(dir)
 
-        if self.projects_id_list and self.branch:
+        if self.projects_id_list and self.branch and not self.get_jobs_id_list:
             # download artifact by branch
             for i, project in enumerate(self.projects_id_list):
                 logger.critical("[%s] artifact download starting" %self.projects[i].replace("%2F","/"))
@@ -217,6 +171,16 @@ class GitLabTools():
                 cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
                 self.doshell(cmd,"[%s] artifact download " %self.projects[i].replace("%2F","/"))
             os.chdir(self.scriptPath)
+        elif self.projects_id_list and self.get_jobs_id_list and len(self.projects_id_list) == len(self.get_jobs_id_list):
+            # download artifact by get_jobs_id
+            for i, project in enumerate(self.projects_id_list):
+                logger.critical("[%s] artifact download starting" %self.projects[i].replace("%2F","/"))
+                info = {"gitlab_domain": self.gitlab_domain, "project_id": project, "job_id": self.get_jobs_id_list[i]}
+                url = r"http://{gitlab_domain}/api/v4/projects/{project_id}/jobs/{job_id}/artifacts".format(**info)
+                cmd = r'curl -OJ --header "PRIVATE-TOKEN: {}"  "{}"'.format(self.token, url)
+                self.doshell(cmd,"[%s] artifact download " %self.projects[i].replace("%2F","/"))
+            os.chdir(self.scriptPath)
+        
         else:
             os.chdir(self.scriptPath)
             raise Exception("download exception")
@@ -232,21 +196,25 @@ class GitLabTools():
         if output_str:
             try:
                 output = json.loads(output_str)
-                if output.get("message"):
-                    if isinstance(output["message"], str):
-                        r_message = "".join(output["message"])
+                if type(output)==dict:
+                    if output.get("message"):
+                        if isinstance(output["message"], str):
+                            r_message = "".join(output["message"])
+                        else:
+                            r_message = output["message"]
+                        logger.critical("{}, message: {}".format(info, r_message))
+                    elif output.get("state"):
+                        state = str(output["state"])
+                        iid = str(output["iid"])
+                        logger.critical("{}, state: {}, iid: {}".format(info, state, iid))
+                    elif output.get("status"):
+                        status = output.get("status")
+                        logger.critical("{}, status: {}".format(info, status))
+                    elif output.get("error"):
+                        error = output.get("error")
+                        logger.critical("{}, error: {}".format(info, error))
                     else:
-                        r_message = output["message"]
-                    logger.critical("{}, message: {}".format(info, r_message))
-                elif output.get("state"):
-                    state = str(output["state"])
-                    iid = str(output["iid"])
-                    logger.critical("{}, state: {}, iid: {}".format(info, state, iid))
-                elif output.get("status"):
-                    status = output.get("status")
-                    logger.critical("{}, status: {}".format(info, status))
-                else:
-                    logger.critical("{} success, output: {}".format(info, output))
+                        logger.critical("{} success, output: {}".format(info, output))
                 return output
             except json.JSONDecodeError :
                 logger.critical(info + " success! %s" %output_str)
@@ -340,9 +308,13 @@ class GitLabTools():
                 else:
                     logger.error("[%s] create branch is interrupted,because pre_cmd is faild" % self.projects[i].replace("%2F","/"))
 
+
+
+
+
+
 if __name__ == "__main__":
     gitlab = GitLabTools()
-    print(gitlab.pipline_data)
     if gitlab.download:
         gitlab.download_by_shell()
     if gitlab.createtag:
