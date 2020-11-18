@@ -101,7 +101,7 @@ class GitLabTools():
         for i, project  in enumerate(self.projects_id_list):
             temp=[]
             info = {"token": self.token, "gitlab_domain": self.gitlab_domain, "project_id": project, "status": status}
-            cmd = r'curl --request GET  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs?per_page=100&scope[]={status}" '.format(**info) 
+            cmd = r'curl --globoff --request GET  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs?per_page=100&scope[]={status}" '.format(**info) 
             result = self.doshell(cmd, "[%s] get %s job" %(self.projects[i].replace("%2F","/"), status))
             for job in result:
                 if job.get('ref')==self.branch:
