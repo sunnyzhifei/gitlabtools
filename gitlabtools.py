@@ -103,18 +103,22 @@ class GitLabTools():
             info = {"token": self.token, "gitlab_domain": self.gitlab_domain, "project_id": project, "status": status}
             cmd = r'curl --globoff --request GET  --header "PRIVATE-TOKEN: {token}" "http://{gitlab_domain}/api/v4/projects/{project_id}/jobs?per_page=100&scope[]={status}" '.format(**info) 
             result = self.doshell(cmd, "[%s] get %s job" %(self.projects[i].replace("%2F","/"), status))
-            for job in result:
-                if job.get('ref')==self.branch:
-                    temp.append(job.get('id'))
-            # set max jobid
-            jobs_temp.append(max(temp))
+            if result:
+                for job in result:
+                    if job.get('ref')==self.branch:
+                        temp.append(job.get('id'))
+                # set max jobid
+                if temp:
+                    jobs_temp.append(max(temp))
+                else:
+                    logger.error("[%s] get latest 100 jobs,but not found job about branch: [%s]" %(self.projects[i].replace("%2F","/"),self.branch))
         return jobs_temp
 
     def get_file_name(self, url, headers):
         filename = ''
         if 'Content-Disposition' in headers and headers['Content-Disposition']:
             disposition_split = headers['Content-Disposition'].split(';')
-            if len(disposition_split) > 1:
+            if len(disposition_split) > 1:  
                 if disposition_split[1].strip().lower().startswith('filename='):
                     file_name = disposition_split[1].split('=')
                     if len(file_name) > 1:
@@ -140,12 +144,11 @@ class GitLabTools():
                     f.write(chunk)
 
     def download_by_shell(self):
+        job_re = ""
         if self.branch == "test":
             job_re = "bjtest_build"
         elif self.branch == "dev":
             job_re = "dev_build"
-        elif self.branch == "":
-            job_re = ""
         else:
             self.get_jobs_id_list = self.get_latest_jobs()
         dir = self.time
@@ -153,7 +156,7 @@ class GitLabTools():
             os.mkdir(dir)
         os.chdir(dir)
 
-        if self.projects_id_list and self.branch and not self.get_jobs_id_list:
+        if self.projects_id_list and self.branch and not self.get_jobs_id_list and job_re:
             # download artifact by branch
             for i, project in enumerate(self.projects_id_list):
                 logger.critical("[%s] artifact download starting" %self.projects[i].replace("%2F","/"))
@@ -183,7 +186,7 @@ class GitLabTools():
         
         else:
             os.chdir(self.scriptPath)
-            raise Exception("download exception")
+            logger.error("download exception")
         
 
     def doshell(self, cmd, info=None):
