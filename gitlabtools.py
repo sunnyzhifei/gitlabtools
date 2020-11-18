@@ -107,11 +107,11 @@ class GitLabTools():
                 for job in result:
                     if job.get('ref')==self.branch:
                         temp.append(job.get('id'))
-                # set max jobid
-                if temp:
-                    jobs_temp.append(max(temp))
-                else:
-                    logger.error("[%s] get latest 100 jobs,but not found job about branch: [%s]" %(self.projects[i].replace("%2F","/"),self.branch))
+            # set max jobid
+            if temp:
+                jobs_temp.append(max(temp))
+            else:
+                logger.error("[%s] get latest 100 jobs,but not found job about branch: [%s]" %(self.projects[i].replace("%2F","/"),self.branch))
         return jobs_temp
 
     def get_file_name(self, url, headers):
