@@ -26,11 +26,16 @@ ch.setFormatter(formatter)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
+with open('src/config.json', mode='r') as fc:
+    config = json.loads(fc.read())
+    gitlab_domain = config["gitlab_domain"]
+    gitlab_token = config["gitlab_token"]
+
 class GitLabTools():
     ''' download aritfact and create tag by gitlab api'''
     def __init__(self):
-        self.gitlab_domain = "git.iwellmass.com"
-        self.token = "TM99wdzKSsZQJjPAL687"
+        self.gitlab_domain = gitlab_domain
+        self.token = gitlab_token
         self.projects = ""
         self.branch = ""
         self.jobs_id_list = []

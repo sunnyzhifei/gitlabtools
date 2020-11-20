@@ -1,3 +1,4 @@
-const apiServer =  ""
+const config = require("./config.json")
 
-export { apiServer }
+
+export { config }

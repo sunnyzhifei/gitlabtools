@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import ".././App.css";
 import { Divider } from "antd";
-import { apiServer } from "../Api.js"
+import { config } from "../Api.js"
 
 class LogContent extends Component{
     constructor(props) {
@@ -14,7 +14,7 @@ class LogContent extends Component{
       }
 
     componentDidMount() {
-        const source = new EventSource(`${apiServer}/api/stream`)
+        const source = new EventSource(`${config.apiServer}/api/stream`)
         source.addEventListener('log',(event)=>{
             const { data } = event
             // const dataString = data.replace(/^(\s|b')+|(\s|\\n')+$/g,'').replace(/^(\s|b")+|(\s|\\n")+$/g,'');

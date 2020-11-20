@@ -5,11 +5,11 @@ import { Form, Input, Checkbox, Button, message } from "antd";
 import { Select, Spin } from "antd";
 import debounce from "lodash/debounce";
 import axios from "axios";
-import { apiServer } from "../Api.js"
+import { config } from "../Api.js"
 
 const { Option } = Select;
 
-const headers = { "Private-Token": "TM99wdzKSsZQJjPAL687" };
+const headers = { "Private-Token": config.gitlab_token };
 
 const layout = {
   labelCol: {
@@ -40,7 +40,7 @@ class BranchContent extends Component {
     form.type = "uniquebranch"
     // console.log("form: ",form)
     axios
-      .post(`${apiServer}/api/gitlab`, 
+      .post(`${config.apiServer}/api/gitlab`, 
         form
       )
       .then((res)=>{
@@ -54,7 +54,7 @@ class BranchContent extends Component {
   fetchProject = (value) => {
     this.setState({ data: [], fetching: true });
     axios
-      .get("http://git.iwellmass.com/api/v4/search", {
+      .get(`http://${config.gitlab_token}/api/v4/search`, {
         params: {
           scope: "projects",
           search: value,

@@ -5,11 +5,11 @@ import { Select, Spin } from "antd";
 import debounce from "lodash/debounce";
 import axios from "axios";
 import { MinusCircleOutlined, PlusCircleOutlined } from '@ant-design/icons';
-import { apiServer } from "../Api.js"
+import { config } from "../Api.js"
 
 const { Option } = Select;
 
-const headers = { "Private-Token": "TM99wdzKSsZQJjPAL687" };
+const headers = { "Private-Token": config.gitlab_token };
 
 const layout = {
   labelCol: {
@@ -47,7 +47,7 @@ class MutiBranchContent extends Component {
     form.type = "mutibranch"
     // console.log("form: ",form)
     axios
-      .post(`${apiServer}/api/gitlab`, 
+      .post(`${config.apiServer}/api/gitlab`, 
         form
       )
       .then((res)=>{
@@ -62,7 +62,7 @@ class MutiBranchContent extends Component {
   fetchProject = (value) => {
     this.setState({ project: {data: [], fetching: true }});
     axios
-      .get("http://git.iwellmass.com/api/v4/search", {
+      .get(`http://${config.gitlab_domain}/api/v4/search`, {
         params: {
           scope: "projects",
           search: value,
@@ -91,7 +91,7 @@ class MutiBranchContent extends Component {
         const projectName = this.formRef.current.getFieldValue("project")[field].name.replace("/","%2F")
         this.setState({branch: {data: [], fetching: true }});
         axios
-          .get(`http://git.iwellmass.com/api/v4/projects/${projectName}/repository/branches`, {
+          .get(`http://${config.gitlab_domain}/api/v4/projects/${projectName}/repository/branches`, {
             params: {
               per_page: 500,
               search: value
