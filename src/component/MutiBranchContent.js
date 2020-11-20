@@ -25,21 +25,19 @@ class MutiBranchContent extends Component {
     super(props);
     this.fetchProject = debounce(this.fetchProject, 800);
     this.fetchBranch = debounce(this.fetchBranch, 800);
-  }
-
-  state = {
-    loading: false,
-    project:{
-      data: [],
-      value: [],
-      fetching: false
-    },
-    branch:{
-      data: [],
-      value: [],
-      fetching: false
-    }
-  };
+    this.state = {
+      loading: false,
+      project:{
+        data: [],
+        value: [],
+        fetching: false
+      },
+      branch:{
+        data: [],
+        value: [],
+        fetching: false
+      }
+    };
   }
   formRef = React.createRef();
 
