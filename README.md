@@ -1,7 +1,15 @@
 ## Display
 ![gitlabtools.png](public/gitlabtool-display.png)
 
-
+## Config
+modify gitlab_domain & gitlab_token in src/config.json
+```json
+{
+    "gitlab_domain":"git.iwellmass.com",
+    "gitlab_token": "TM99wdzKSsZQJjPAL687",
+    "apiServer":""
+}
+```
 ## Available Scripts
 
 In the project directory, you can run:

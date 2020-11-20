@@ -54,7 +54,7 @@ class BranchContent extends Component {
   fetchProject = (value) => {
     this.setState({ data: [], fetching: true });
     axios
-      .get(`http://${config.gitlab_token}/api/v4/search`, {
+      .get(`http://${config.gitlab_domain}/api/v4/search`, {
         params: {
           scope: "projects",
           search: value,
