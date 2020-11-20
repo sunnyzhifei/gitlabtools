@@ -40,6 +40,8 @@ class MutiBranchContent extends Component {
       fetching: false
     }
   };
+  }
+  formRef = React.createRef();
 
   onFinish = (values) => {
     this.setState({loading: true})
@@ -83,14 +85,15 @@ class MutiBranchContent extends Component {
       });
   };
 
-  fetchBranch = (value) => {
-    // console.log(this.state.project.value)
+  fetchBranch = (value,field) => {
+    // console.log('field:',field)
+    // console.log("formRef.project",this.formRef.current.getFieldValue("project")[field])
     if(this.state.project.value.length){
       if (this.state.project.value!=="none"){
-        const projectname = this.state.project.value.replace("/","%2F")
+        const projectName = this.formRef.current.getFieldValue("project")[field].name.replace("/","%2F")
         this.setState({branch: {data: [], fetching: true }});
         axios
-          .get(`http://git.iwellmass.com/api/v4/projects/${projectname}/repository/branches`, {
+          .get(`http://git.iwellmass.com/api/v4/projects/${projectName}/repository/branches`, {
             params: {
               per_page: 500,
               search: value
@@ -135,29 +138,28 @@ class MutiBranchContent extends Component {
     });
   };
 
+
   render() {
     const { project,branch,loading } = this.state;
     return (
-      <Form {...layout} name="nest-messages" onFinish={this.onFinish} initialValues={{"project":[{
+      <Form {...layout} ref={this.formRef} name="nest-messages" onFinish={this.onFinish} initialValues={{"project":[{
       }]}}>
         <Form.List name="project" >
         {(fields, { add, remove }) => {
           return (
             <div>
               {fields.map((field,index) => (
-                <>
-                  <Form.Item className="myant-form-item" required label={index === 0 ? 'project' : 'project'+index} key={"project"+index}>
+                  <Form.Item className="myant-form-item" required label={index === 0 ? 'project' : 'project'+index} key={'fields'+index} >
                     <Input.Group compact>
                       <Form.Item 
                       {...field}
-                      name={[field.name, 'name']}
+                      name={[field.fieldKey, 'name']}
                       fieldKey={[field.fieldKey, 'name']}
-                      key={[field.fieldKey, 'name'+index]}
+                      key={'project'+index}
                       rules={[{ required: true, message: 'missing project name' }]}
                       >
                       <Select
                         showSearch
-                        allowClear
                         value={project.value}
                         placeholder="select project"
                         notFoundContent={project.fetching ? <Spin size="small" /> : null}
@@ -166,27 +168,26 @@ class MutiBranchContent extends Component {
                         onChange={this.handleProjectChange}
                         style={{ width: "300px" }}
                       >
-                        {project.data.map((d,index) => (
+                        {project.data.map((d) => (
                           <Option key={d}>{d}</Option>
                         ))}
                       </Select>
                       </Form.Item>
                       <Form.Item 
                       {...field}
-                      name={[field.name, 'branch']}
+                      name={[field.fieldKey, 'branch']}
                       fieldKey={[field.fieldKey, 'branch']}
-                      key={[field.fieldKey, 'branch'+index]}
+                      key={'branch'+index}
                       rules={[{ required: true, message: 'missing project branch' }]}
                       >
                       <Select
                         showSearch
-                        allowClear
                         value={branch.value}
                         placeholder="select branch"
                         notFoundContent={branch.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
-                        onSearch={this.fetchBranch}
-                        onClick={this.handleBranchChange}
+                        onSearch={(value)=>{this.fetchBranch(value,field.fieldKey)}}
+                        onChange={this.handleBranchChange}
                         style={{ width: "300px" }}
                       >
                         {branch.data.map((d) => (
@@ -210,8 +211,6 @@ class MutiBranchContent extends Component {
                       />
                     </Input.Group>
                   </Form.Item>
-                {/* // </Space> */}
-                </>
               ))}
             </div>
           );
