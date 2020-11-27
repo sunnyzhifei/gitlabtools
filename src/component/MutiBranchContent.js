@@ -90,22 +90,33 @@ class MutiBranchContent extends Component {
       if (this.state.project.value!=="none"){
         const projectName = this.formRef.current.getFieldValue("project")[field].name.replace("/","%2F")
         this.setState({branch: {data: [], fetching: true }});
-        axios
-          .get(`http://${config.gitlab_domain}/api/v4/projects/${projectName}/repository/branches`, {
+        axios.all([
+          axios.get(`http://${config.gitlab_domain}/api/v4/projects/${projectName}/repository/branches`, {
             params: {
               per_page: 500,
               search: value
             },
             headers: headers,
-          })
-          .then((response) => {
-            const data = response.data.map((item) => {
-              let data1 = [...this.state.branch.data];
-              data1.push(item.name);
-              return data1;
-            });
-            this.setState({ branch:{ data: data, fetching: false }});
-          })
+          }),
+          axios.get(`http://${config.gitlab_domain}/api/v4/projects/${projectName}/repository/tags`, {
+            params: {
+              per_page: 500,
+              search: value
+            },
+            headers: headers,
+          })])
+          .then(
+            axios.spread((branchs,tags) => {
+              let searchData = branchs.data.concat(tags.data)
+              console.log("searchData: ",searchData)
+              const data = searchData.map((item) => {
+                let data1 = [...this.state.branch.data];
+                data1.push(item.name);
+                return data1;
+              });
+              this.setState({ branch:{ data: data, fetching: false }});
+            })
+          )
           .catch((err) => {
             console.log("err:",err);
           });
