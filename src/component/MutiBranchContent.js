@@ -192,7 +192,7 @@ class MutiBranchContent extends Component {
                       <Select
                         showSearch
                         value={branch.value}
-                        placeholder="select branch"
+                        placeholder="select branch or tag"
                         notFoundContent={branch.fetching ? <Spin size="small" /> : null}
                         filterOption={false}
                         onSearch={(value)=>{this.fetchBranch(value,field.fieldKey)}}
