@@ -50,7 +50,7 @@ def gitlab():
                 gitlab.createBranchName = createBranchName
 
                 if download:
-                    gitlab.download_by_shell()
+                    gitlab.download_by_shell(type=type)
                 if createTagName:
                     gitlab.create_tag()
                 if createBranchName:
@@ -90,7 +90,7 @@ def gitlab():
                     gitlab.createBranchName = createBranchName
 
                     if download:
-                        gitlab.download_by_shell()
+                        gitlab.download_by_shell(type=type)
                     if createTagName:
                         gitlab.create_tag()
                     if createBranchName:
@@ -135,7 +135,7 @@ def gitlab():
                     gitlab.pipline_data = pipline_data
 
                     if download:
-                        gitlab.download_by_shell()
+                        gitlab.download_by_shell(type=type)
                     if createTagName:
                         gitlab.create_tag()
                     if createBranchName:

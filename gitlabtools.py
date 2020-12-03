@@ -148,14 +148,15 @@ class GitLabTools():
                 if chunk:
                     f.write(chunk)
 
-    def download_by_shell(self):
+    def download_by_shell(self, type):
         job_re = ""
         if self.branch == "test":
             job_re = "bjtest_build"
         elif self.branch == "dev":
             job_re = "dev_build"
         else:
-            self.get_jobs_id_list = self.get_latest_jobs()
+            if type != 'job':
+                self.get_jobs_id_list = self.get_latest_jobs()
         dir = self.time
         if not os.path.exists(dir):
             os.mkdir(dir)
