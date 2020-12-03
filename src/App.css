@@ -57,3 +57,7 @@ pre{
   background-color: aliceblue;
   margin-top: 0%;
   }
+
+.err_log{
+  color: red;
+}

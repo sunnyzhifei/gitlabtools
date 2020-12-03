@@ -72,7 +72,11 @@ class LogContent extends Component{
                 >
                     {
                         this.state.log.map((item)=>{
-                            return <div>{item}</div>
+                            if (item.match("ERROR")!=null | item.match("error")!=null){
+                                return <div className='err_log'>{item}</div>
+                            } else {
+                                return <div>{item}</div>
+                            }
                         })
                     }
                 </pre>
