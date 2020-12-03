@@ -47,8 +47,10 @@ class BranchContent extends Component {
         message.success(res.data.message)
         this.setState({loading: false})
       })
-      .catch((e)=>{
-        message.error(e)
+      .catch((err)=>{
+        message.error("服务异常,请稍后重试")
+        console.log(err)
+        this.setState({loading: false})
       })
   };
   fetchProject = (value) => {
