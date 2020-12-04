@@ -32,6 +32,10 @@ yarn build
 python3 main.py
 ```
 
+### compile file
+```shell
+python3 -m compileall *.py -qb
+```
 
 ## If you use nginx to proxy, config like below:
 ```
