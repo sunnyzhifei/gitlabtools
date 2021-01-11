@@ -41,7 +41,8 @@ class BranchContent extends Component {
     // console.log("form: ",form)
     axios
       .post(`${config.apiServer}/api/gitlab`, 
-        form
+        form,
+        {timeout: 0}
       )
       .then((res)=>{
         message.success(res.data.message)
