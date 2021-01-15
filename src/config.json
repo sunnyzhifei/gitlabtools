@@ -1,5 +1,5 @@
 {
     "gitlab_domain":"git.iwellmass.com",
     "gitlab_token": "TM99wdzKSsZQJjPAL687",
-    "apiServer":"http://127.0.0.1:54320"
+    "apiServer":""
 }
