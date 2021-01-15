@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, request, render_template, make_response, jsonify, Response
+from flask import Flask, redirect, url_for, request, render_template, make_response, jsonify, Response, session, redirect
 from gitlabtools import GitLabTools,logger
 import os
 from time import sleep
@@ -8,11 +8,55 @@ from flask_cors import CORS
 app = Flask(__name__, template_folder='build', static_folder='build', static_url_path='')
 CORS(app)
 
+# 配置 SELECT_KEY
+app.config['SECRET_KEY']='gitlabtools,lizhifei%$'
+
 dirname, filename = os.path.split(os.path.abspath(__file__))
 
-@app.route('/')
+@app.route('/',methods=['GET'])
 def index():
-   return render_template('index.html')
+    if request.method == 'GET':
+        # if 'username' in session:
+        #     return render_template('index.html')
+        # else:
+        #     if 'username' in request.cookies:
+        #         username = request.cookies.get('username')
+        #         session['username'] = username
+        #         return render_template('index.html')
+        #     else:
+        return render_template('index.html')
+
+@app.route('/api/login',methods=['GET','POST'])
+def login_new():
+    if request.method == 'GET':
+        if 'username' in session:
+            return render_template('index.html')
+        else:
+            if 'username' in request.cookies:
+                username = request.cookies.get('username')
+                session['username'] = username
+                return render_template('index.html')
+            else:
+                result_text = {"state": 1,"message": "登录信息失效，请重新登录"}
+    else:
+        result = json.loads(request.data.decode("utf-8"))
+        username = result.get('username')
+        password = result.get('password')
+        remember = result.get('remember')
+        if username=='admin' and password=='admin':
+            result_text = {"state": 0, "message": "登录成功"}
+            resp = make_response(jsonify(result_text))
+            session['username'] = username
+            logger.info(session)
+            if remember:
+                resp.set_cookie('username',username,60*60*24*7)
+            return resp
+        else:
+            result_text = {"state": 1, "message": "用户名或密码错误"}
+    
+    response = make_response(jsonify(result_text))
+    return response
+    
 
 @app.route('/api/gitlab',methods = ['POST', 'GET'])
 def gitlab():

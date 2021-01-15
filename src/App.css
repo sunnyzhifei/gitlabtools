@@ -61,3 +61,20 @@ pre{
 .err_log{
   color: red;
 }
+
+
+
+
+.login-form {
+  max-width: 300px;
+  margin: 200px auto;
+}
+.login-form-forgot {
+  float: right;
+}
+.ant-col-rtl .login-form-forgot {
+  float: left;
+}
+.login-form-button {
+  width: 100%;
+}
