@@ -16,14 +16,11 @@ dirname, filename = os.path.split(os.path.abspath(__file__))
 @app.route('/',methods=['GET'])
 def index():
     if request.method == 'GET':
-        # if 'username' in session:
-        #     return render_template('index.html')
-        # else:
-        #     if 'username' in request.cookies:
-        #         username = request.cookies.get('username')
-        #         session['username'] = username
-        #         return render_template('index.html')
-        #     else:
+        return render_template('index.html')
+
+@app.route('/login',methods=['GET'])
+def login():
+    if request.method == 'GET':
         return render_template('index.html')
 
 @app.route('/api/login',methods=['GET','POST'])
