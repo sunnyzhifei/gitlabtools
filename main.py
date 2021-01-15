@@ -43,7 +43,7 @@ def login_new():
         username = result.get('username')
         password = result.get('password')
         remember = result.get('remember')
-        if username=='admin' and password=='admin':
+        if username=='gitlab' and password=='gitlab@tool':
             result_text = {"state": 0, "message": "登录成功"}
             resp = make_response(jsonify(result_text))
             session['username'] = username
@@ -212,4 +212,4 @@ def stream():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=54320)
+    app.run(debug=False, host="0.0.0.0", port=54320)
