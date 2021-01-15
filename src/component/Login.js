@@ -8,7 +8,6 @@ import { Redirect } from "react-router-dom";
 
 const LoginComponent = (props) => {
   const onFinish = (values) => {
-    console.log('Received values of form: ', values);
     axios
       .post(`${config.apiServer}/api/login`, 
       values
