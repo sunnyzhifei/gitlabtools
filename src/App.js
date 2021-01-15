@@ -59,8 +59,6 @@ class App extends Component{
     }
   }
   render (){
-    
-    console.log("state1: ",this.state)
     if ( this.state.isLogin){
       return (
         <Layout>

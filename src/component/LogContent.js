@@ -30,7 +30,9 @@ class LogContent extends Component{
     
     scrollme = ()=>{ 
         var output = document.getElementById("output");
-        output.scrollTop = output.scrollHeight;
+        if (output){
+            output.scrollTop = output.scrollHeight;
+        }
     }
     handleClick = ()=>{
         if(this.state.isScroll){
